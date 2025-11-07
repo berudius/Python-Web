@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наші номери - Edemium</title>
+    <style>
+        :root {
+            --accent: #2b7a78;
+            --accent-dark: #1f5f5d;
+            --muted: #6b7280;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --border: #e6eef0;
+            --danger: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            margin: 0;
+            background: var(--bg);
+            color: #111;
+        }
+
+        /* --- Хедер --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 18px 24px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        header.hide {
+            transform: translateY(-100%);
+        }
+
+        header.show {
+            transform: translateY(0);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        nav li a:hover {
+            color: var(--accent);
+        }
+
+        .cta {
+            background: var(--accent);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .cta:hover {
+            background: var(--accent-dark);
+        }
+
+        main {
+            padding: 34px 24px;
+            margin-top: 60px;
+            /* Замість 80px, щоб бути ближче до хедера */
+        }
+
+        .card {
+            background: var(--card);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
+            margin-bottom: 18px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px;
+            font-weight: 700;
+        }
+
+
+        /* Новий клас, який додає відступ знизу */
+        .h2-admin-margin {
+            margin-bottom: 12px;
+            margin-top: 24px;
+            /* Загальний стиль */
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* --- Стилі для Форм (з login/reg) --- */
+        .form-card {
+            padding: 24px;
+        }
+
+        .form-card label {
+            display: block;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-card input[type="text"],
+        .form-card input[type="number"],
+        .form-card input[type="file"],
+        .form-card textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-card textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-card button[type="submit"] {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        /* --- Сітка Кімнат --- */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
+
+        .room-card {
+            padding: 0;
+            /* Картка сама буде гнучкою */
+            overflow: hidden;
+            /* Щоб зображення мало гострі кути */
+        }
+
+        .room-image-container {
+            width: 100%;
+            height: 200px;
+            background: #f0f4f6;
+        }
+
+        .room-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-card-content {
+            padding: 18px;
+        }
+
+        .room-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .room-meta span:last-child {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .room-card h3 {
+            margin-bottom: 6px;
+        }
+
+        .room-card p {
+            font-size: 14px;
+            margin: 0 0 12px;
+        }
+
+        h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px;
+        }
+
+        .facilities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .facility-pill {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        /* --- Кнопки Адміна --- */
+        .admin-actions {
+            border-top: 1px solid var(--border);
+            padding: 12px 18px;
+            background: var(--bg);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .cta-secondary,
+        .cta-danger {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--muted);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cta-danger {
+            color: var(--danger);
+        }
+
+        .cta-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #f0f9f9;
+        }
+
+        .cta-danger:hover {
+            background: #fff5f5;
+            border-color: var(--danger);
+        }
+
+
+        /* --- Футер --- */
+        footer {
+            padding: 22px 24px;
+            border-top: 1px solid var(--border);
+            background: transparent;
+            margin-top: 32px;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .social {
+            display: flex;
+            gap: 8px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container nav">
+            <div class="brand">
+                <div class="logo">E</div>
+                <div>
+                    <div style="font-weight:700">Edemium</div>
+                    <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                </div>
+            </div>
+
+            <nav aria-label="Головне меню">
+                <ul>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/public">Головна</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/rooms">Послуги</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
+                </ul>
+            </nav>
+
+            <div>
+                <a class="cta" href="#">Забронювати</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ========================== -->
+        <!--    ФОРМА ДЛЯ АДМІНА        -->
+        <!-- ========================== -->
+        {% if is_admin %}
+        <section class="card form-card">
+            <h2>Додати новий номер</h2>
+
+            <form method="post" action="/rooms" enctype="multipart/form-data">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <label>Назва/Тип
+                        <input type="text" name="type" placeholder="Напр., 'Люкс з видом на море'" required>
+                    </label>
+                    <label>Ціна (UAH/ніч)
+                        <input type="number" name="price" step="0.01" placeholder="1500" required>
+                    </label>
+                    <label>Місткість (гостей)
+                        <input type="number" name="guest_capacity" step="1" placeholder="2" required>
+                    </label>
+                </div>
+
+                <label>Опис
+                    <textarea name="description" placeholder="Короткий опис номера..." required></textarea>
+                </label>
+
+                <label>Зручності (для кількох, додайте більше полів)
+                    <small style="font-weight: 400; color: var(--muted); display: block; margin-bottom: 4px;">Ваш бекенд
+                        очікує список. Щоб додати більше, потрібно додати JS, але для тесту можна додати їх вручну в
+                        HTML.</small>
+                    <input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'">
+                    <input type="text" name="facilities" placeholder="Напр., 'Кондиціонер'" style="margin-top: 8px;">
+                    <input type="text" name="facilities" placeholder="Напр., 'Вид на море'" style="margin-top: 8px;">
+                </label>
+
+                <label>Зображення (можна обрати декілька)
+                    <input type="file" name="images" multiple required>
+                </label>
+
+                <button type="submit" class="cta" style="margin-top: 12px;">Додати номер</button>
+            </form>
+        </section>
+        {% endif %}
+
+
+        <!-- ========================== -->
+        <!--    СПИСОК НОМЕРІВ         -->
+        <!-- ========================== -->
+        <h2 style="margin-top: 24px;" class="{% if is_admin %}h2-admin-margin{% endif %}">
+            Наші номери
+        </h2>
+
+        <div class="room-grid">
+
+            {% for room in rooms %}
+            <div class="card room-card">
+
+                <!-- Зображення -->
+                <div class="room-image-container">
+                    {% set images = rooms_images_url_map[room.id] %}
+                    {% if images %}
+                    <img src="{{ images[0] }}" alt="{{ room.type }}">
+                    {% else %}
+                    <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Edemium" alt="Фото відсутнє">
+                    {% endif %}
+                </div>
+
+                <!-- Контент -->
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>{{ "%.2f"|format(room.price) }} UAH / ніч</span>
+                        <span>{{ room.guest_capacity }} гост{% if room.guest_capacity > 1 %}я/ей{% else %}ь{% endif
+                            %}</span>
+                    </div>
+
+                    <h3>{{ room.type }}</h3>
+                    <p>{{ room.description }}</p>
+
+                    <h4>Зручності:</h4>
+                    <div class="facilities-list">
+                        {% for facility in room.facilities %}
+                        <span class="facility-pill">{{ facility }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Кнопки Адміна -->
+                {% if is_admin %}
+                <div class="admin-actions">
+                    <button class="cta-secondary">Редагувати</button>
+                    <button class="cta-danger">Видалити</button>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+
+        </div> <!-- .room-grid -->
+
+    </main>
+
+    <footer>
+        <div class="container footer-inner">
+            <div>
+                <div style="font-weight:700">Edemium</div>
+                <div class="muted">© 2025 Edemium. Всі права захищені.</div>
+            </div>
+
+            <div class="social muted">Instagram • Facebook • LinkedIn</div>
+        </div>
+    </footer>
+
+    <script>
+        // Скрипт для приховування хедера при прокрутці
+        let lastScroll = 0;
+        const header = document.querySelector("header");
+
+        window.addEventListener("scroll", () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll <= 0) {
+                header.classList.remove("hide");
+                header.classList.add("show");
+                return;
+            }
+
+            if (currentScroll > lastScroll && !header.classList.contains("hide")) {
+                // Scroll Down
+                header.classList.remove("show");
+                header.classList.add("hide");
+            } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
+                // Scroll Up
+                header.classList.remove("hide");
+                header.classList.add("show");
+            }
+
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+
+</html>

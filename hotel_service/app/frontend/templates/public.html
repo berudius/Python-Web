@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Привітання</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Arial', sans-serif;
+            display: block;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        header {
+      background: #27757e;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    header a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    header a:hover {
+      color: #cceff3;
+    }
+
+        .greeting-box {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px 60px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .emoji {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ USER_SERVICE_URL }}/registration">Реєстрація</a>
+        <a href="{{ USER_SERVICE_URL }}/login">Вхід</a>
+        <a href="/public">Публічна сторінка</a>
+        <a href="/autentificated_user_page">Для автор. користувачів</a>
+        <a href="/admin_page">Тільки Адмін</a>
+    </header>
+    <div class="greeting-box">
+        <h1>Привіт, користувачу! <span class="emoji">👋</span></h1>
+        <p>Бажаємо тобі гарного дня та багато позитиву! <span class="emoji">🌞</span></p>
+    </div>
+</body>
+</html>
