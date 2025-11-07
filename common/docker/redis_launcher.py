@@ -18,7 +18,19 @@ def run_redis():
             )
         except subprocess.CalledProcessError as e:
             print(f"Помилка при створенні нового контейнера: {e}")
-    #     except Exception as e:
-    #         print(e)
-    # except Exception as e:
-    #     print(e)
+
+def stop_redis():
+    container_name = "my-redis"
+    try:
+        subprocess.run(
+            ["docker", "stop", container_name],
+            check=True, capture_output=True
+        )
+        print(f"Redis контейнер '{container_name}' зупинений")
+        subprocess.run(
+            ["docker", "rm", container_name],
+            check=True, capture_output=True
+        )
+        print(f"Redis контейнер '{container_name}' видалений")
+    except subprocess.CalledProcessError as e:
+        print(f"Помилка при зупинці або видаленні контейнера: {e.stderr.decode()}")

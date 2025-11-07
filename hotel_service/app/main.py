@@ -5,7 +5,7 @@ from ..app.backend.routers import  public_router, services_router, about_us_rout
 from ..app.backend.config.statica_config import static_dir_path
 from ..app.backend import models
 from common.db.database import Base, engine
-from common.docker.redis_launcher import run_redis
+from common.docker.redis_launcher import run_redis, stop_redis
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -14,7 +14,10 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine) 
     run_redis()
 
-    yield
+    try:
+        yield
+    finally:
+        stop_redis()
 
 app = FastAPI(lifespan=lifespan)
 
