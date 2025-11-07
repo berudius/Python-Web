@@ -7,6 +7,7 @@ from ..app.backend.models import User
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("--- Lifespan event in user_service triggered ---")
     Base.metadata.create_all(bind=engine)
     run_redis()
     
