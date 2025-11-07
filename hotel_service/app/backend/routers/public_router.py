@@ -11,7 +11,7 @@ from common.config.services_paths import USER_SERVICE_URL
 
 router = APIRouter()
 
-@router.get("/public", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def register_get(request: Request):
     session = getSession(request, sessionStorage=session_storage)
     if not session:

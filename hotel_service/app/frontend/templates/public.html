@@ -1,73 +1,533 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
-    <title>Привітання</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Головна - Edemium</title>
     <style>
+        :root {
+            --accent: #2b7a78;
+            --accent-dark: #1f5f5d;
+            --muted: #6b7280;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --border: #e6eef0;
+            --danger: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #f0f8ff;
-            font-family: 'Arial', sans-serif;
-            display: block;
-            justify-content: center;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            margin: 0;
+            background: var(--bg);
+            color: #111;
+        }
+
+        /* --- Хедер --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 18px 24px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        header.hide {
+            transform: translateY(-100%);
+        }
+
+        header.show {
+            transform: translateY(0);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav {
+            display: flex;
             align-items: center;
-            height: 100vh;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        nav li a:hover {
+            color: var(--accent);
+        }
+
+        .cta {
+            background: var(--accent);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .cta:hover {
+            background: var(--accent-dark);
+        }
+
+        main {
+            padding: 34px 24px;
+            /* Відступ зверху для фікс. хедера */
+            margin-top: 80px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
+            margin-bottom: 24px;
+        }
+
+        /* --- Секція Hero (НОВА) --- */
+        .hero-card {
+            text-align: center;
+            padding: 48px 30px;
+            background: linear-gradient(145deg, var(--card) 0%, #f0f9f9 100%);
+        }
+
+        .hero-card h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 12px;
+        }
+
+        .hero-card p {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto 24px;
+            line-height: 1.6;
+        }
+
+        .hero-card .cta {
+            font-size: 17px;
+            padding: 14px 28px;
+        }
+
+        /* --- Загальний заголовок секції (НОВИЙ) --- */
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 16px;
+        }
+
+        /* --- Сітка переваг (НОВА) --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .feature-card h3 {
+             margin: 0 0 8px;
+        }
+        
+        .feature-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
             margin: 0;
         }
 
-        header {
-      background: #27757e;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-    }
+        /* --- Сітка Кімнат (З rooms.html) --- */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
 
-    header a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
-      transition: color 0.3s ease;
-    }
+        .room-card {
+            padding: 0;
+            overflow: hidden;
+            margin: 0; /* Видаляємо margin-bottom, бо він є у .card */
+        }
 
-    header a:hover {
-      color: #cceff3;
-    }
+        .room-image-container {
+            width: 100%;
+            height: 200px;
+            background: #f0f4f6;
+        }
 
-        .greeting-box {
+        .room-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-card-content {
+            padding: 18px;
+        }
+
+        .room-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .room-meta span:last-child {
+            color: var(--muted);
+            font-weight: 500;
+        }
+        
+        .room-card h3 {
+            margin: 0 0 6px;
+        }
+
+        .room-card p {
+            font-size: 14px;
+            margin: 0 0 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .facilities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .facility-pill {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        /* --- Кнопка "Всі номери" (НОВА) --- */
+        .view-all-container {
             text-align: center;
-            background-color: #ffffff;
-            padding: 40px 60px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 24px;
+        }
+        .cta-secondary {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--muted);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .cta-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #f0f9f9;
         }
 
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 20px;
+        /* --- Секція "Про нас" (З about_us.html, спрощена) --- */
+         .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 18px;
+         }
+         
+        .about-grid h2 {
+            margin: 0 0 10px;
         }
 
-        p {
-            color: #333;
-            font-size: 18px;
+        /* --- Футер --- */
+        footer {
+            padding: 22px 24px;
+            border-top: 1px solid var(--border);
+            background: transparent;
+            margin-top: 32px;
         }
 
-        .emoji {
-            font-size: 24px;
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
         }
+
+        .social {
+            display: flex;
+            gap: 8px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        
+        /* Адаптивність */
+        @media (max-width: 900px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav {
+                /* На мобільних хедер можна було б приховати за бургер-меню */
+                gap: 12px;
+            }
+            nav ul {
+                display: none; /* Простий спосіб, але краще - бургер */
+            }
+        }
+
     </style>
 </head>
+
 <body>
     <header>
-        <a href="{{ USER_SERVICE_URL }}/registration">Реєстрація</a>
-        <a href="{{ USER_SERVICE_URL }}/login">Вхід</a>
-        <a href="/public">Публічна сторінка</a>
-        <a href="/autentificated_user_page">Для автор. користувачів</a>
-        <a href="/admin_page">Тільки Адмін</a>
+        <div class="container nav">
+            <a href="/" class="brand">
+                <div class="logo">E</div>
+                <div>
+                    <div style="font-weight:700">Edemium</div>
+                    <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                </div>
+            </a>
+
+            <nav aria-label="Головне меню">
+                <ul>
+                    <li><a href="/">Головна</a></li>
+                    <li><a href="/services">Послуги</a></li>
+                    <li><a href="/about_us">Про нас</a></li>
+                </ul>
+            </nav>
+
+            <div>
+                 <a class="cta" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                 </div>
+        </div>
     </header>
-    <div class="greeting-box">
-        <h1>Привіт, користувачу! <span class="emoji">👋</span></h1>
-        <p>Бажаємо тобі гарного дня та багато позитиву! <span class="emoji">🌞</span></p>
-    </div>
+
+    <main class="container">
+
+        <section class="hero-card">
+            <h1>Вітаємо в Edemium</h1>
+            <p>Ваш комфорт — наша турбота. Знайдіть та забронюйте ідеальний номер за лічені хвилини за допомогою
+                нашого цифрового сервісу.</p>
+            <a href="/rooms" class="cta">Переглянути номери</a>
+        </section>
+
+
+        <h2 class="section-title">Чому Edemium?</h2>
+        <section class="features-grid">
+            <div class="card feature-card">
+                <h3>💎 Ексклюзивні номери</h3>
+                <p>Тільки перевірені апартаменти з реальними фото та повним описом зручностей.</p>
+            </div>
+            <div class="card feature-card">
+                <h3>📱 Цифровий сервіс</h3>
+                <p>Керуйте бронюванням, замовляйте послуги та отримуйте підтримку онлайн.</p>
+            </div>
+            <div class="card feature-card">
+                <h3>💸 Гарантія ціни</h3>
+                <p>Бронюйте напряму без прихованих комісій та зборів посередників.</p>
+            </div>
+        </section>
+
+
+        <h2 class="section-title">Наші найкращі номери</h2>
+        
+        <div class="room-grid">
+            
+            <div class="card room-card">
+                <div class="room-image-container">
+                    <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Люкс" alt="Люкс з видом на море">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>3500.00 UAH / ніч</span>
+                        <span>4 гостя/ей</span>
+                    </div>
+                    <h3>Люкс з видом на море</h3>
+                    <p>Просторий номер преміум-класу з панорамними вікнами та балконом.</p>
+                    <div class="facilities-list">
+                        <span class="facility-pill">Wi-Fi</span>
+                        <span class="facility-pill">Кондиціонер</span>
+                        <span class="facility-pill">Вид на море</span>
+                        <span class="facility-pill">Джакузі</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card room-card">
+                <div class="room-image-container">
+                    <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Стандарт" alt="Стандарт">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>1800.00 UAH / ніч</span>
+                        <span>2 гостя</span>
+                    </div>
+                    <h3>Комфорт-стандарт</h3>
+                    <p>Затишний та функціональний номер, ідеально підходить для ділових поїздок.</p>
+                    <div class="facilities-list">
+                        <span class="facility-pill">Wi-Fi</span>
+                        <span class="facility-pill">Кондиціонер</span>
+                        <span class="facility-pill">Робочий стіл</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card room-card">
+                <div class="room-image-container">
+                    <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Апартаменти" alt="Апартаменти">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>2400.00 UAH / ніч</span>
+                        <span>3 гостя/ей</span>
+                    </div>
+                    <h3>Сімейні апартаменти</h3>
+                    <p>Двокімнатний номер з невеликою кухнею для комфортного відпочинку.</p>
+                    <div class="facilities-list">
+                        <span class="facility-pill">Wi-Fi</span>
+                        <span class="facility-pill">Міні-кухня</span>
+                        <span class="facility-pill">Телевізор</span>
+                    </div>
+                </div>
+            </div>
+
+        </div> <div class="view-all-container">
+            <a href="/rooms" class="cta-secondary">Переглянути всі номери</a>
+        </div>
+
+
+        <div class="about-grid" style="margin-top: 40px;">
+            
+            <section class="card">
+                <h2>Хто ми?</h2>
+                <p>Edemium — це не просто готель, а сучасна платформа, створена для вашої зручності.
+                    Ми поєднуємо гостинність з технологіями, щоб зробити ваше перебування максимально
+                    комфортним та ефективним.</p>
+                <p>Наша місія — надати гостям повний контроль над своїм відпочинком через
+                    зручний цифровий інтерфейс.</p>
+                <a href="/about_us" class="cta" style="margin-top: 10px; display: inline-block;">Дізнатися більше</a>
+            </section>
+
+            <aside>
+                <div class="card">
+                     <h3 style="margin:0 0 8px">Швидкі посилання</h3>
+                     <ul style="padding-left:18px; margin:0; color:var(--muted); line-height: 1.6;">
+                         <li>Політика конфіденційності</li>
+                         <li>Правила користування</li>
+                         <li>FAQ</li>
+                     </ul>
+                </div>
+                
+                 <div class="card" style="margin-top:18px">
+                    <h3 style="margin:0 0 10px">Наші контакти</h3>
+                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Адреса:</strong><br>вул. Прикладівська, 10, Київ</p>
+                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Телефон:</strong><br>+380 44 123 4567</p>
+                 </div>
+            </aside>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container footer-inner">
+            <div>
+                <div style="font-weight:700">Edemium</div>
+                <div class="muted">© 2025 Edemium. Всі права захищені.</div>
+            </div>
+
+            <div class="contacts">
+                <div class="social muted">Instagram • Facebook • LinkedIn</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Скрипт для приховування хедера при прокрутці
+        let lastScroll = 0;
+        const header = document.querySelector("header");
+
+        window.addEventListener("scroll", () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll <= 0) {
+                header.classList.remove("hide");
+                header.classList.add("show");
+                return;
+            }
+
+            if (currentScroll > lastScroll && !header.classList.contains("hide")) {
+                // Scroll Down
+                header.classList.remove("show");
+                header.classList.add("hide");
+            } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
+                // Scroll Up
+                header.classList.remove("hide");
+                header.classList.add("show");
+            }
+
+            lastScroll = currentScroll;
+        });
+    </script>
 </body>
+
 </html>
