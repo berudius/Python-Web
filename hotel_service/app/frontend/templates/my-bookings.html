@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Мої бронювання - Edemium</title>
     <style>
-        :root { --accent: #2b7a78; --muted: #6b7280; --bg: #f7fafc; --card: #ffffff; --danger: #d9534f; --info-bg: #e7f3fe; --info-text: #31708f; --success-bg: #d4edda; --success-text: #155724; }
+        :root { --accent: #2b7a78; --muted: #6b7280; --bg: #f7fafc; --card: #ffffff; --danger: #d9534f; --success: #4caf50; --warning: #f0ad4e; --info-bg: #e7f3fe; --info-text: #31708f; --success-bg: #d4edda; --success-text: #155724; }
         * { box-sizing: border-box; }
         body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 0; background: var(--bg); color: #111; }
         header { position: fixed; top: 0; left: 0; width: 100%; padding: 18px 24px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 10; }
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
         .nav { display: flex; align-items: center; justify-content: space-between; }
         .brand { display: flex; align-items: center; gap: 12px; color: #111; }
         .logo { width: 44px; height: 44px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
@@ -28,22 +28,24 @@
         .message-card.success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-text); }
         .message-card.error { background-color: #fddede; color: var(--danger); border: 1px solid var(--danger); }
         .message-card.info { background-color: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-text); }
-        .booking-card { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }
-        .booking-card h4 { margin-top: 0; }
-        .booking-card p { margin-bottom: 8px; }
-        .booking-room-list { padding-left: 20px; margin: 0; }
-        .actions-column { display: flex; flex-direction: column; gap: 10px; }
-        .btn-danger { background-color: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; text-align: center; }
-        .btn-danger:hover { background-color: #c9302c; text-decoration: none; }
-        .auth-cta-card { text-align: center; padding: 48px 24px; }
-        .auth-cta-card h2 { margin-top: 0; font-size: 1.75rem; }
-        .auth-cta-card p { color: var(--muted); margin-bottom: 24px; }
-        .auth-cta-card .actions { justify-content: center; }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; font-weight: 600; }
+        .status { padding: 4px 8px; border-radius: 99px; font-weight: 500; font-size: 12px; }
+        .status.confirmed { background-color: var(--success-bg); color: var(--success-text); }
+        .status.pending { background-color: #fffbeb; color: #b45309; }
+        .status.cancelled { background-color: #fee2e2; color: #b91c1c; }
+        .status.completed { background-color: #f0fdf4; color: #15803d; }
+        .btn { border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; text-align: center; display: inline-block; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .admin-controls form { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; }
     </style>
 </head>
 <body>
     <header>
-        <div class="container nav">
+         <div class="container nav">
             <a href="/" class="brand">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div class="logo">E</div>
@@ -59,6 +61,9 @@
                     <li><a href="/services">Сервіси</a></li>
                     <li><a href="/about_us">Про нас</a></li>
                     <li><a href="/my-bookings">Мої бронювання</a></li>
+                    {% if is_admin %}
+                    <li><a href="/my-bookings">Панель бронювань</a></li>
+                    {% endif %}
                 </ul>
             </nav>
             <div class="actions">
@@ -73,100 +78,124 @@
     </header>
 
     <main class="container">
-        <h1>Мої бронювання</h1>
+        <h1>{% if is_admin %}Панель керування бронюваннями{% else %}Мої бронювання{% endif %}</h1>
 
-        {% if success_message %}
-        <div class="card message-card success">
-            <p>{{ success_message }}</p>
-        </div>
-        {% endif %}
+        {% if success_message %}<div class="card message-card success"><p>{{ success_message }}</p></div>{% endif %}
+        {% if booking_error %}<div class="card message-card error"><p>{{ booking_error }}</p></div>{% endif %}
 
-        {% if booking_error %}
-        <div class="card message-card error">
-            <p>{{ booking_error }}</p>
+        {% if is_admin %}
+        <div class="card admin-controls">
+            <form method="get" action="/my-bookings">
+                <select name="status_filter" onchange="this.form.submit()">
+                    <option value="">Всі статуси</option>
+                    <option value="Розглядається" {% if status_filter == 'Розглядається' %}selected{% endif %}>Розглядається</option>
+                    <option value="Підтверджено" {% if status_filter == 'Підтверджено' %}selected{% endif %}>Підтверджено</option>
+                    <option value="Скасовано" {% if status_filter == 'Скасовано' %}selected{% endif %}>Скасовано</option>
+                    <option value="Завершено" {% if status_filter == 'Завершено' %}selected{% endif %}>Завершено</option>
+                </select>
+                <input type="text" name="phone_filter" placeholder="Пошук за номером..." value="{{ phone_filter or '' }}">
+                <button type="submit" class="cta">Фільтрувати</button>
+                <a href="/my-bookings" class="cta-outline">Скинути</a>
+            </form>
         </div>
         {% endif %}
 
         {% if is_authorized %}
-            {% if trust_level > 0 %}
-            <div class="card message-card info">
-                <p><strong>Ваш поточний рівень довіри: {{ trust_level }}.</strong> Скасування бронювань може вплинути на ваш рівень.</p>
-            </div>
+            {% if not is_admin and trust_level > 0 %}
+            <div class="card message-card info"><p><strong>Ваш поточний рівень довіри: {{ trust_level }}.</strong></p></div>
             {% endif %}
 
             {% if my_bookings %}
-                <section class="bookings-list">
-                    {% for booking in my_bookings %}
-                    <div class="card booking-card">
-                        <div class="booking-card-content">
-                            <h4>Бронювання #{{ booking.id }} (Статус: <strong>{{ booking.status }}</strong>)</h4>
-                            <p><strong>Дати:</strong> {{ booking.arrival_date.strftime('%d.%m.%Y') }} - {{ booking.departure_date.strftime('%d.%m.%Y') }}</p>
-                            <p><strong>Контактний номер:</strong> {{ booking.phone_number }}</p>
-                            <p><strong>Номери:</strong></p>
-                            <ul class="booking-room-list">
-                                {% for room in booking.rooms %}
-                                <li>{{ room.type }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="actions-column">
-                             {% if booking.status in ['Розглядається', 'Підтверджено'] and trust_level > 0 %}
-                            <form method="post" action="/bookings/cancel/{{ booking.id }}" onsubmit="return handleCancel(event);">
-                                <button type="submit" class="btn-danger">Скасувати</button>
-                            </form>
-                             {% elif booking.status in ['Розглядається', 'Підтверджено'] and trust_level == 0 %}
-                                <p style="color: var(--muted); font-size: 14px; text-align: center;">Для скасування зв'яжіться з адміністрацією.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </section>
-            {% else %}
-                <div class="card">
-                    <p>У вас ще немає активних бронювань. <a href="/rooms">Бажаєте забронювати номер?</a></p>
+                <div class="card table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Дати</th>
+                                <th>Номери</th>
+                                {% if is_admin %}<th>Користувач</th><th>Телефон</th>{% endif %}
+                                <th>Статус</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in my_bookings %}
+                            <tr id="booking-row-{{ booking.id }}">
+                                <td>#{{ booking.id }}</td>
+                                <td>{{ booking.arrival_date.strftime('%d.%m') }} - {{ booking.departure_date.strftime('%d.%m.%Y') }}</td>
+                                <td>
+                                    <ul style="margin:0; padding-left: 15px;">
+                                    {% for room in booking.rooms %}<li>{{ room.type }}</li>{% endfor %}
+                                    </ul>
+                                </td>
+                                {% if is_admin %}<td>{{ booking.user_id or 'Гість' }}</td><td>{{ booking.phone_number }}</td>{% endif %}
+                                <td><span class="status" id="status-{{ booking.id }}">{{ booking.status }}</span></td>
+                                <td id="actions-{{ booking.id }}">
+                                    {% if is_admin and booking.status == 'Розглядається' %}
+                                        <button class="btn btn-success" onclick="updateStatus({{ booking.id }}, 'Підтверджено')">Підтвердити</button>
+                                        <button class="btn btn-danger" onclick="updateStatus({{ booking.id }}, 'Скасовано')">Відхилити</button>
+                                    {% elif not is_admin and booking.status in ['Розглядається', 'Підтверджено'] and trust_level > 0 %}
+                                        <form method="post" action="/bookings/cancel/{{ booking.id }}" onsubmit="return handleCancel(event);"><button type="submit" class="btn-danger">Скасувати</button></form>
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
+            {% else %}
+                <div class="card"><p>Не знайдено бронювань за вашими критеріями.</p></div>
             {% endif %}
         {% else %}
             <div class="card auth-cta-card">
                 <h2>Керуйте своїми бронюваннями</h2>
                 <p>Увійдіть до свого акаунту або зареєструйтесь, щоб переглядати історію, статуси та керувати своїми бронюваннями в одному місці.</p>
-                <div class="actions">
-                    <a class="cta-outline" href="{{ login_url }}" style="min-width: 150px;">Увійти</a>
-                    <a class="cta" href="{{ register_url }}" style="min-width: 150px;">Створити акаунт</a>
-                </div>
+                <div class="actions"><a class="cta-outline" href="{{ login_url }}">Увійти</a><a class="cta" href="{{ register_url }}">Створити акаунт</a></div>
             </div>
         {% endif %}
-
     </main>
 
-    {% if is_authorized %}
     <script>
-        const userTrustLevel = {{ trust_level }};
-
         function handleCancel(event) {
-            // Запобігаємо стандартній відправці форми, щоб показати кастомне попередження
-            event.preventDefault(); 
-
+            event.preventDefault();
+            const userTrustLevel = {{ trust_level | default(0) }};
             let warningMessage = "Ви впевнені, що хочете скасувати це бронювання?";
-
             if (userTrustLevel === 1) {
                 warningMessage += "\n\nУВАГА: Це призведе до зниження вашого рівня довіри до 0, і ви не зможете скасовувати бронювання онлайн у майбутньому.";
-            } else if (userTrustLevel === 2) {
-                warningMessage += "\n\nПОПЕРЕДЖЕННЯ: Якщо це друге скасування поспіль, ваш рівень довіри буде знижено до 1.";
-            } else if (userTrustLevel === 3) {
-                 warningMessage += "\n\nПОПЕРЕДЖЕННЯ: Якщо це третє скасування поспіль, ваш рівень довіри буде знижено до 1.";
+            } else if (userTrustLevel === 2 || userTrustLevel === 3) {
+                warningMessage += "\n\nПОПЕРЕДЖЕННЯ: Часті скасування можуть призвести до зниження вашого рівня довіри.";
             }
-
             if (confirm(warningMessage)) {
-                // Якщо користувач натиснув "OK", відправляємо форму програмно
                 event.target.submit();
-            } else {
-                // Якщо користувач натиснув "Cancel", нічого не відбувається
-                return false;
             }
         }
-    </script>
-    {% endif %}
 
+        {% if is_admin %}
+        async function updateStatus(bookingId, newStatus) {
+            try {
+                const response = await fetch(`/admin/bookings/${bookingId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    const statusEl = document.getElementById(`status-${bookingId}`);
+                    const actionsEl = document.getElementById(`actions-${bookingId}`);
+                    statusEl.textContent = newStatus;
+                    actionsEl.innerHTML = 'Оновлено';
+                    alert(result.message || 'Статус успішно оновлено!');
+                } else {
+                    throw new Error(result.detail || 'Не вдалося оновити статус.');
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                alert(`Помилка: ${error.message}`);
+            }
+        }
+        {% endif %}
+    </script>
 </body>
 </html>

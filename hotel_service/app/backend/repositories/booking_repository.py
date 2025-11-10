@@ -5,6 +5,24 @@ from datetime import date
 from ..models.Booking import Booking
 from ..models.Room import Room
 
+def get_rooms_by_ids(db: Session, room_ids: List[int]) -> List[Room]:
+    """Повертає список об'єктів номерів за їх ID."""
+    if not room_ids:
+        return []
+    return db.query(Room).filter(Room.id.in_(room_ids)).all()
+
+def are_rooms_available(db: Session, room_ids: List[int], arrival_date: date, departure_date: date) -> bool:
+    """Перевіряє, чи всі вказані номери вільні у заданому діапазоні дат."""
+    conflicting_bookings_count = db.query(Booking).join(Booking.rooms).filter(
+        and_(
+            Room.id.in_(room_ids),
+            Booking.status.in_(["Підтверджено", "Розглядається"]),
+            Booking.arrival_date < departure_date,
+            Booking.departure_date > arrival_date
+        )
+    ).count()
+    return conflicting_bookings_count == 0
+
 def add_booking(
     db: Session, 
     phone_number: str,
@@ -39,11 +57,17 @@ def get_bookings_by_ids(db: Session, booking_ids: List[int]) -> List[Booking]:
 def get_bookings_by_user_id(db: Session, user_id: int) -> List[Booking]:
     return db.query(Booking).filter(Booking.user_id == user_id).order_by(Booking.arrival_date.desc()).all()
 
-def get_bookings_by_phone(db: Session, phone_number: str) -> List[Booking]:
-    return db.query(Booking).filter(Booking.phone_number == phone_number).order_by(Booking.arrival_date.desc()).all()
-
-def get_all_bookings(db: Session) -> List[Booking]:
-    return db.query(Booking).order_by(Booking.arrival_date.desc()).all()
+def get_all_bookings_with_filters(
+    db: Session, 
+    status: Optional[str] = None, 
+    phone_number: Optional[str] = None
+) -> List[Booking]:
+    query = db.query(Booking)
+    if status:
+        query = query.filter(Booking.status == status)
+    if phone_number:
+        query = query.filter(Booking.phone_number.like(f"%{phone_number}%"))
+    return query.order_by(Booking.arrival_date.desc()).all()
 
 def update_booking(db: Session, booking_id: int, update_data: Dict[str, Any]) -> Optional[Booking]:
     booking = db.query(Booking).filter(Booking.id == booking_id).first()

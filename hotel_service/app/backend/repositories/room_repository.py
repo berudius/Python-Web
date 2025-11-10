@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func, and_
 from typing import List, Optional, Dict, Any
 from ..models.Room import Room, PhysicalRoom
 
@@ -9,10 +10,8 @@ def add_room(
     type: str, 
     guest_capacity: int, 
     facilities: List[str],
-    room_numbers: List[str]  # <-- ДОДАНО: список номерів (напр., ["101", "102"])
+    room_numbers: List[str]
 ) -> Room:
-    
-    # 1. Створюємо "модель номеру"
     new_room_model = Room(
         price=price,
         description=description,
@@ -20,58 +19,74 @@ def add_room(
         guest_capacity=guest_capacity,
         facilities=facilities
     )
-
     db.add(new_room_model)
     db.commit()
     db.refresh(new_room_model)
 
-    
-    # 2. Створюємо "Фізичні номери" і прив'язуємо їх
     created_physical_rooms = []
     for number in room_numbers:
         new_physical_room = PhysicalRoom(
             room_model_id=new_room_model.id,
             room_number=number,
-            is_booked=False # За замовчуванням вільні
+            is_booked=False
         )
         created_physical_rooms.append(new_physical_room)
     
-
     db.add_all(created_physical_rooms)
     db.commit()
-    
-    db.refresh(new_room_model) # Оновлюємо, щоб отримати зв'язок
+    db.refresh(new_room_model)
     return new_room_model
 
 def get_room_by_id(db: Session, room_id: int) -> Optional[Room]:
-    # Оновлюємо, щоб одразу завантажити інвентар
     return db.query(Room).options(
         joinedload(Room.physical_rooms)
     ).filter(Room.id == room_id).first()
 
-def get_all_rooms(db: Session) -> List[Room]:
-    # ---- ВИПРАВЛЕНО ----
-    # 1. Забираємо дубльований запит
-    # 2. Додаємо joinedload, щоб уникнути N+1 проблеми
-    #    (це завантажує всі physical_rooms одним JOIN-запитом)
-    rooms = db.query(Room).options(
-        joinedload(Room.physical_rooms) 
-    ).all()
+def get_all_facilities(db: Session) -> List[str]:
+    """Повертає список всіх унікальних зручностей, що існують в базі даних."""
+    # Ця реалізація розгортає масив JSON і знаходить унікальні значення.
+    # Вона специфічна для PostgreSQL.
+    all_facilities = db.query(func.json_array_elements_text(Room.facilities)).distinct().all()
+    return [facility for facility, in all_facilities]
+
+def get_filtered_rooms(
+    db: Session,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+    min_guests: Optional[int] = None,
+    facilities: Optional[List[str]] = None
+) -> List[Room]:
+    """
+    Повертає список моделей номерів з урахуванням фільтрів.
+    Ефективно завантажує пов'язані фізичні номери.
+    """
+    query = db.query(Room).options(joinedload(Room.physical_rooms))
     
-    print(f"КІЛЬКІСТЬ ТИПІВ КІМНАТ З БД: {len(rooms)}")
-    return rooms # <-- ВИПРАВЛЕНО: повертаємо 'rooms'
+    if min_price is not None:
+        query = query.filter(Room.price >= min_price)
+    
+    if max_price is not None:
+        query = query.filter(Room.price <= max_price)
+        
+    if min_guests is not None:
+        query = query.filter(Room.guest_capacity >= min_guests)
+    
+    if facilities:
+        # Для PostgreSQL використовується оператор `contains` (`@>`).
+        # Він перевіряє, чи JSON-масив `facilities` в базі даних містить всі 
+        # елементи зі списку, переданого в запиті.
+        query = query.filter(Room.facilities.contains(facilities))
+        
+    return query.all()
 
 def update_room(db: Session, room_id: int, update_data: Dict[str, Any]) -> Optional[Room]:
     room = db.query(Room).filter(Room.id == room_id).first()
-    
     if room:
         for key, value in update_data.items():
             if hasattr(room, key):
                 setattr(room, key, value)
-        
         db.commit()
         db.refresh(room)
-        
     return room
 
 def delete_room_by_id(db: Session, room_id: int) -> int:
@@ -79,10 +94,7 @@ def delete_room_by_id(db: Session, room_id: int) -> int:
     db.commit()
     return deleted_count
 
-
 def get_rooms_by_ids(db: Session, room_ids: List[int]) -> List[Room]:
     if not room_ids:
         return []
-        
-    # Використовуємо 'in_' для фільтрації за списком значень
     return db.query(Room).filter(Room.id.in_(room_ids)).all()

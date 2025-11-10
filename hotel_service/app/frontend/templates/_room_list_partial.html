@@ -1,0 +1,37 @@
+{% for room_ctx in room_contexts %}
+<div class="room-card" data-room-id="{{ room_ctx.data.id }}">
+    <div class="room-images">
+        {% for img_url in room_ctx.images %}
+        <img src="{{ img_url }}" alt="Фото номеру {{ room_ctx.data.type }}" loading="lazy" onclick="openModal(this)">
+        {% endfor %}
+    </div>
+    <div class="room-info">
+        <h3>{{ room_ctx.data.type }}</h3>
+        <p class="price">{{ "%.2f"|format(room_ctx.data.price) }} грн/ніч</p>
+        <p class="capacity">Максимум гостей: {{ room_ctx.data.guest_capacity }}</p>
+        <p class="description">{{ room_ctx.data.description }}</p>
+        <div class="facilities">
+            {% for facility in room_ctx.data.facilities %}
+            <span>{{ facility }}</span>
+            {% endfor %}
+        </div>
+        <div class="room-actions">
+            <p class="availability-info">
+                Доступно: <strong>{{ room_ctx.available_count }}</strong> / {{ room_ctx.total_count }}
+            </p>
+            <button class="cta" 
+                data-room-id="{{ room_ctx.data.id }}" 
+                data-room-price="{{ room_ctx.data.price }}"
+                data-room-type="{{ room_ctx.data.type }}"
+                onclick="selectRoom(this)" 
+                {% if room_ctx.available_count == 0 %}disabled{% endif %}>
+                Обрати
+            </button>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card" id="no-results">
+    <p style="text-align: center; padding: 40px;">На жаль, за вашими критеріями номерів не знайдено. Спробуйте змінити параметри фільтрації.</p>
+</div>
+{% endfor %}
