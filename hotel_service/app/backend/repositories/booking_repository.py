@@ -6,19 +6,23 @@ from ..models.Room import Room # Потрібна для зв'язування
 
 def add_booking(
     db: Session, 
-    user_id: int, 
+    phone_number: str,       # phone_number тепер обов'язковий
     room_ids: List[int], 
     arrival_date: date, 
-    departure_date: date
+    departure_date: date,
+    status: str,
+    user_id: Optional[int]   # user_id тепер опціональний
 ) -> Booking:
 
     rooms_to_book = db.query(Room).filter(Room.id.in_(room_ids)).all()
 
     new_booking = Booking(
         user_id=user_id,
+        phone_number=phone_number, # Додано
         arrival_date=arrival_date,
         departure_date=departure_date,
-        rooms=rooms_to_book # SQLAlchemy автоматично обробляє M2M зв'язок
+        rooms=rooms_to_book,
+        status = status
     )
     db.add(new_booking)
     db.commit()
@@ -28,8 +32,19 @@ def add_booking(
 def get_booking_by_id(db: Session, booking_id: int) -> Optional[Booking]:
     return db.query(Booking).filter(Booking.id == booking_id).first()
 
+# --- НОВИЙ МЕТОД ---
+def get_bookings_by_user_id(db: Session, user_id: int) -> List[Booking]:
+    """Отримує всі бронювання для конкретного ID користувача."""
+    return db.query(Booking).filter(Booking.user_id == user_id).order_by(Booking.arrival_date.desc()).all()
+
+# --- НОВИЙ МЕТОД ---
+def get_bookings_by_phone(db: Session, phone_number: str) -> List[Booking]:
+    """Отримує всі бронювання за номером телефону (для гостей)."""
+    return db.query(Booking).filter(Booking.phone_number == phone_number).order_by(Booking.arrival_date.desc()).all()
+
 def get_all_bookings(db: Session) -> List[Booking]:
-    return db.query(Booking).all()
+    """Отримує абсолютно всі бронювання (для адмінів)."""
+    return db.query(Booking).order_by(Booking.arrival_date.desc()).all()
 
 def update_booking(
     db: Session, 
@@ -37,48 +52,45 @@ def update_booking(
     update_data: Dict[str, Any]
 ) -> Optional[Booking]:
     """
-    Повністю оновлює бронювання.
-    
-    Може оновлювати прості поля (наприклад, 'arrival_date')
-    та M2M зв'язок 'rooms'.
-    
-    Для оновлення кімнат 'update_data' має містити ключ 'room_ids'
-    зі списком ID нових кімнат.
+    Оновлює бронювання.
+    Підтримує оновлення:
+    - phone_number
+    - user_id
+    - status
+    - arrival_date
+    - departure_date
+    - room_ids (оновлює пов'язану Many-to-Many таблицю)
     """
-    
-    # 1. Знаходимо наше бронювання
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     
     if not booking:
         return None
 
-    # 2. Обробка M2M (Кімнати)
-    # .pop() витягує ключ 'room_ids' зі словника і видаляє його.
-    # Якщо ключа немає, повертається None.
+    # Оновлення кімнат, якщо передано
     room_ids = update_data.pop('room_ids', None)
-
-    # `is not None` дозволяє передати порожній список [], 
-    # щоб видалити всі кімнати з бронювання.
     if room_ids is not None:
-        # Знаходимо об'єкти кімнат, які відповідають наданим ID
         rooms_to_book = db.query(Room).filter(Room.id.in_(room_ids)).all()
-        
-        # Призначення нового списку кімнат.
-        # SQLAlchemy автоматично оновить асоціативну таблицю.
         booking.rooms = rooms_to_book
 
-    # 3. Обробка простих полів
-    # (Після .pop() у 'update_data' залишилися лише прості поля)
+    # Оновлення інших полів (status, phone_number, user_id, arrival_date, departure_date)
     for key, value in update_data.items():
         if hasattr(booking, key):
             setattr(booking, key, value)
             
-    # 4. Збереження змін
     db.commit()
     db.refresh(booking)
         
     return booking
-
-def delete_booking_by_id(db: Session, booking_id: int) -> int:
-    db.query(Booking).filter(Booking.id == booking_id).delete(synchronize_session=False)
-    db.commit()
+def delete_booking_by_id(db: Session, booking_id: int):
+    # По-перше, знайдемо бронювання, щоб розірвати зв'язки M2M
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if booking:
+        # Це очистить зв'язки в асоціативній таблиці
+        booking.rooms = [] 
+        db.commit()
+        
+        # Тепер видаляємо саме бронювання
+        db.query(Booking).filter(Booking.id == booking_id).delete(synchronize_session=False)
+        db.commit()
+        return True
+    return False

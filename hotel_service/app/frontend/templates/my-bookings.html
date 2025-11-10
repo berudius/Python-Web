@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Мої бронювання</title>
+    </head>
+<body>
+    <main class="container">
+        <div class="spacer"></div>
+        <h1>Мої бронювання</h1>
+
+        {% if success_message %}
+        <div class="card message-card success">
+            <p>{{ success_message }}</p>
+        </div>
+        {% endif %}
+        
+        {% if message %}
+        <div class="card message-card">
+            <p>{{ message }}</p>
+        </div>
+        {% endif %}
+
+        {% if my_bookings %}
+        <section class="bookings-list">
+            <h2>Активні бронювання ({{ my_bookings|length }})</h2>
+            {% for booking in my_bookings %}
+            <div class="card booking-card">
+                <div class="booking-card-content">
+                    <h4>Бронювання #{{ booking.id }} (Статус: {{ booking.status }})</h4>
+                    <p><strong>Дати:</strong> {{ booking.arrival_date.strftime('%d.%m.%Y') }} - {{ booking.departure_date.strftime('%d.%m.%Y') }}</p>
+                    <p><strong>Номери:</strong></p>
+                    <ul class="booking-room-list">
+                        {% for room in booking.rooms %}
+                        <li>{{ room.type }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="admin-actions">
+                    {% if booking.status == 'Розглядається' %}
+                    <form method="post" action="/bookings/cancel/{{ booking.id }}"
+                          onsubmit="return confirm('Ви впевнені, що хочете скасувати це бронювання?');">
+                        <button type="submit" class="cta-danger">Скасувати</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>

@@ -17,7 +17,7 @@ async def register_get(request: Request):
     session = getSession(request, sessionStorage=session_storage)
     if session:
         if session.get("user_id"):
-            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/public")
+            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/")
         else:
             return RedirectResponse(url=f"/logout")
     return templates.TemplateResponse("registration.html", {"request": request, "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL})
@@ -32,7 +32,7 @@ async def register_post(
     session = getSession(request, sessionStorage=session_storage)
     if session:
         if session.get("user_id"):
-            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/public")
+            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/")
         else:
             return RedirectResponse(url=f"/logout")
 
@@ -47,7 +47,7 @@ async def login_get(request: Request):
     session = getSession(request, sessionStorage=session_storage)
     if session:
         if session.get("user_id"):
-            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/public")
+            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/")
         else:
             return RedirectResponse(url=f"/logout")
     return templates.TemplateResponse("login.html", {"request": request, "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL})
@@ -62,7 +62,7 @@ async def login_post(
     session = getSession(request, sessionStorage=session_storage)
     if session:
         if session.get("user_id"):
-            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/public")
+            return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/")
         else:
             return RedirectResponse(url=f"/logout")
 
@@ -73,15 +73,15 @@ async def login_post(
 
     redirect_url = None
     if user.role == "admin":
-        redirect_url = f"{HOTEL_SERVICE_URL}/admin_page"
+        redirect_url = f"{HOTEL_SERVICE_URL}/"
     else:
-        redirect_url = f"{HOTEL_SERVICE_URL}/autentificated_user_page"
+        redirect_url = f"{HOTEL_SERVICE_URL}/"
     
     response = RedirectResponse(url=redirect_url, status_code=303)
 
     setSession(
         response,
-        {"user_id": user.id, "user_role": user.role},
+        {"user_id": user.id, "user_role": user.role, "trust_level": user.trust_level},
         sessionStorage=session_storage
     )
 
@@ -89,25 +89,28 @@ async def login_post(
     
     
 
-# @router.get("/users/{user_id}")
-# async def get_user(
-#     user_id:int,
-#     db: Session = Depends(get_db)
-# ):
-#     user = get_user_by_id(db, user_id)
+@router.get("/users/{user_id}")
+async def get_user(
+    user_id:int,
+    db: Session = Depends(get_db)
+):
+    user = get_user_by_id(db, user_id)
 
-#     if user is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND, 
-#             detail="User not found"
-#         )
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="User not found"
+        )
     
-#     user_data = {
-#         "login": user.login,
-#         "role": user.role
-#     }
+    user_data = {
+        "id": user.id,
+        "login": user.login,
+        "role": user.role,
+        "phone_number": user.phone_number,
+        "trust_level": user.trust_level
+    }
 
-#     return user_data
+    return user_data
 
 
 @router.get("/logout")

@@ -18,8 +18,14 @@ def get_images_of_room(db: Session, room_id: int) -> List[RoomImage]:
     images = db.query(RoomImage).filter(RoomImage.room_id == room_id).all()
     return images
 def get_images_urls_of_room(db: Session, room_id: int) -> List[str]:
-    urls = db.query(RoomImage.url).filter(RoomImage.room_id == room_id).scalars().all()
+    urls = [row.url for row in db.query(RoomImage).filter(RoomImage.room_id == room_id).all()]
     return urls
+
+def delete_images_by_room_id(db: Session, room_id: int):
+    db.query(RoomImage)\
+      .filter(RoomImage.room_id == room_id)\
+      .delete(synchronize_session=False)
+    db.commit()
 
 # Видаляє як одне фото, так і багато (через ID)
 def delete_images_by_ids(db: Session, image_ids: List[int]):

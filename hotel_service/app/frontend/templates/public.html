@@ -8,12 +8,10 @@
     <style>
         :root {
             --accent: #2b7a78;
-            --accent-dark: #1f5f5d;
             --muted: #6b7280;
             --bg: #f7fafc;
             --card: #ffffff;
-            --border: #e6eef0;
-            --danger: #e53e3e;
+            --danger: #d9534f;
         }
 
         * {
@@ -27,7 +25,6 @@
             color: #111;
         }
 
-        /* --- Хедер --- */
         header {
             position: fixed;
             top: 0;
@@ -101,17 +98,37 @@
             color: var(--accent);
         }
 
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .cta {
             background: var(--accent);
             color: #fff;
             padding: 10px 14px;
             border-radius: 10px;
             font-weight: 600;
-            transition: background 0.2s;
         }
 
         .cta:hover {
-            background: var(--accent-dark);
+            background: #22605e;
+        }
+
+        .cta-outline {
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            background: transparent;
+            transition: 0.2s ease;
+        }
+
+        .cta-outline:hover {
+            background: var(--accent);
+            color: white;
         }
 
         main {
@@ -130,6 +147,7 @@
 
         /* --- Секція Hero (НОВА) --- */
         .hero-card {
+            margin-top: 90px;
             text-align: center;
             padding: 48px 30px;
             background: linear-gradient(145deg, var(--card) 0%, #f0f9f9 100%);
@@ -175,11 +193,11 @@
             padding: 20px;
             text-align: center;
         }
-        
+
         .feature-card h3 {
-             margin: 0 0 8px;
+            margin: 0 0 8px;
         }
-        
+
         .feature-card p {
             font-size: 14px;
             color: var(--muted);
@@ -197,7 +215,8 @@
         .room-card {
             padding: 0;
             overflow: hidden;
-            margin: 0; /* Видаляємо margin-bottom, бо він є у .card */
+            margin: 0;
+            /* Видаляємо margin-bottom, бо він є у .card */
         }
 
         .room-image-container {
@@ -230,7 +249,7 @@
             color: var(--muted);
             font-weight: 500;
         }
-        
+
         .room-card h3 {
             margin: 0 0 6px;
         }
@@ -263,6 +282,7 @@
             text-align: center;
             margin-top: 24px;
         }
+
         .cta-secondary {
             border: 1px solid var(--border);
             background: #fff;
@@ -272,6 +292,7 @@
             font-weight: 600;
             transition: all 0.2s;
         }
+
         .cta-secondary:hover {
             border-color: var(--accent);
             color: var(--accent);
@@ -279,12 +300,12 @@
         }
 
         /* --- Секція "Про нас" (З about_us.html, спрощена) --- */
-         .about-grid {
+        .about-grid {
             display: grid;
             grid-template-columns: 1fr 320px;
             gap: 18px;
-         }
-         
+        }
+
         .about-grid h2 {
             margin: 0 0 10px;
         }
@@ -313,52 +334,57 @@
             color: var(--muted);
             font-size: 14px;
         }
-        
+
         /* Адаптивність */
         @media (max-width: 900px) {
             .about-grid {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         @media (max-width: 768px) {
             .features-grid {
                 grid-template-columns: 1fr;
             }
+
             .nav {
                 /* На мобільних хедер можна було б приховати за бургер-меню */
                 gap: 12px;
             }
+
             nav ul {
-                display: none; /* Простий спосіб, але краще - бургер */
+                display: none;
+                /* Простий спосіб, але краще - бургер */
             }
         }
-
     </style>
 </head>
 
 <body>
     <header>
         <div class="container nav">
-            <a href="/" class="brand">
+            <div class="brand">
                 <div class="logo">E</div>
                 <div>
                     <div style="font-weight:700">Edemium</div>
                     <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
                 </div>
-            </a>
+            </div>
 
             <nav aria-label="Головне меню">
                 <ul>
-                    <li><a href="/">Головна</a></li>
-                    <li><a href="/services">Послуги</a></li>
-                    <li><a href="/about_us">Про нас</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/">Головна</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Послуги</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
                 </ul>
             </nav>
 
-            <div>
-                 <a class="cta" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
-                 </div>
+            <div class="actions">
+                {% if not is_authorized %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                {% endif %}
+                <a class="cta" href="/bookings">Забронювати</a>
+            </div>
         </div>
     </header>
 
@@ -375,24 +401,24 @@
         <h2 class="section-title">Чому Edemium?</h2>
         <section class="features-grid">
             <div class="card feature-card">
-                <h3>💎 Ексклюзивні номери</h3>
+                <h3>Ексклюзивні номери</h3>
                 <p>Тільки перевірені апартаменти з реальними фото та повним описом зручностей.</p>
             </div>
             <div class="card feature-card">
-                <h3>📱 Цифровий сервіс</h3>
+                <h3>Цифровий сервіс</h3>
                 <p>Керуйте бронюванням, замовляйте послуги та отримуйте підтримку онлайн.</p>
             </div>
             <div class="card feature-card">
-                <h3>💸 Гарантія ціни</h3>
+                <h3>Гарантія ціни</h3>
                 <p>Бронюйте напряму без прихованих комісій та зборів посередників.</p>
             </div>
         </section>
 
 
         <h2 class="section-title">Наші найкращі номери</h2>
-        
+
         <div class="room-grid">
-            
+
             <div class="card room-card">
                 <div class="room-image-container">
                     <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Люкс" alt="Люкс з видом на море">
@@ -431,7 +457,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card room-card">
                 <div class="room-image-container">
                     <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Апартаменти" alt="Апартаменти">
@@ -451,13 +477,14 @@
                 </div>
             </div>
 
-        </div> <div class="view-all-container">
+        </div>
+        <div class="view-all-container">
             <a href="/rooms" class="cta-secondary">Переглянути всі номери</a>
         </div>
 
 
         <div class="about-grid" style="margin-top: 40px;">
-            
+
             <section class="card">
                 <h2>Хто ми?</h2>
                 <p>Edemium — це не просто готель, а сучасна платформа, створена для вашої зручності.
@@ -470,19 +497,21 @@
 
             <aside>
                 <div class="card">
-                     <h3 style="margin:0 0 8px">Швидкі посилання</h3>
-                     <ul style="padding-left:18px; margin:0; color:var(--muted); line-height: 1.6;">
-                         <li>Політика конфіденційності</li>
-                         <li>Правила користування</li>
-                         <li>FAQ</li>
-                     </ul>
+                    <h3 style="margin:0 0 8px">Швидкі посилання</h3>
+                    <ul style="padding-left:18px; margin:0; color:var(--muted); line-height: 1.6;">
+                        <li>Політика конфіденційності</li>
+                        <li>Правила користування</li>
+                        <li>FAQ</li>
+                    </ul>
                 </div>
-                
-                 <div class="card" style="margin-top:18px">
+
+                <div class="card" style="margin-top:18px">
                     <h3 style="margin:0 0 10px">Наші контакти</h3>
-                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Адреса:</strong><br>вул. Прикладівська, 10, Київ</p>
-                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Телефон:</strong><br>+380 44 123 4567</p>
-                 </div>
+                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Адреса:</strong><br>вул.
+                        Прикладівська, 10, Київ</p>
+                    <p style="margin:6px 0; color: var(--muted); font-size: 15px;"><strong>Телефон:</strong><br>+380 44
+                        123 4567</p>
+                </div>
             </aside>
         </div>
 

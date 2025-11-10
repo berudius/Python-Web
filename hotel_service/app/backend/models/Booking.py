@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Date, DateTime, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -13,7 +13,9 @@ class Booking(Base):
     arrival_date = Column(DateTime, nullable=False)
     departure_date = Column(Date, nullable=False)
 
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, nullable=True)
+    phone_number = Column(String, nullable=False, index=True)
+    status = Column(String, nullable=False, default="Розглядається")
 
     rooms = relationship("Room", secondary=booking_room_association, back_populates="bookings")
 

@@ -14,10 +14,6 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def register_get(request: Request):
     session = getSession(request, sessionStorage=session_storage)
-    if not session:
-        return templates.TemplateResponse("public.html", {"request": request, "USER_SERVICE_URL": USER_SERVICE_URL})
-    elif session.get("user_role") != "admin":
-        return RedirectResponse(url="/autentificated_user_page")
-    
-    elif session.get("user_role") == "admin":
-        return RedirectResponse(url="/admin_page")
+    if session and session.get("user_id"):
+        return templates.TemplateResponse("public.html", {"request": request, "is_authorized":True})
+    return templates.TemplateResponse("public.html", {"request": request, "is_authorized":False, "USER_SERVICE_URL":USER_SERVICE_URL})

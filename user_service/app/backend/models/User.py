@@ -10,6 +10,7 @@ class User(Base):
     hash_password = Column(String(60), nullable=False)
     email = Column(String(254), unique=True, nullable=True)
     phone_number = Column(String(50), unique=True, nullable=True)
+    trust_level = Column(Integer, default=0) 
 
         
     

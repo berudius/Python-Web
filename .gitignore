@@ -1,0 +1,3 @@
+my-project/hotel_service/app/frontend/static/images/*
+
+!my-project/hotel_service/app/frontend/static/images/.gitkeep

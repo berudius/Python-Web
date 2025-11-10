@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles 
 
-from ..app.backend.routers import  public_router, services_router, about_us_router, rooms_router
+from ..app.backend.routers import  public_router, services_router, about_us_router, rooms_router, booking_router
 from ..app.backend.config.statica_config import static_dir_path
 from ..app.backend import models
 from common.db.database import Base, engine
@@ -27,4 +27,5 @@ app.include_router(public_router.router)
 app.include_router(services_router.router)
 app.include_router(about_us_router.router)
 app.include_router(rooms_router.router)
+app.include_router(booking_router.router)
 

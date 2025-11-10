@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional, Dict, Any
-from ..models.Room import Room
+from ..models.Room import Room, PhysicalRoom
 
 def add_room(
     db: Session, 
@@ -8,25 +8,58 @@ def add_room(
     description: str, 
     type: str, 
     guest_capacity: int, 
-    facilities: List[str]
+    facilities: List[str],
+    room_numbers: List[str]  # <-- ДОДАНО: список номерів (напр., ["101", "102"])
 ) -> Room:
-    new_room = Room(
+    
+    # 1. Створюємо "модель номеру"
+    new_room_model = Room(
         price=price,
         description=description,
         type=type,
         guest_capacity=guest_capacity,
         facilities=facilities
     )
-    db.add(new_room)
+
+    db.add(new_room_model)
     db.commit()
-    db.refresh(new_room)
-    return new_room
+    db.refresh(new_room_model)
+
+    
+    # 2. Створюємо "Фізичні номери" і прив'язуємо їх
+    created_physical_rooms = []
+    for number in room_numbers:
+        new_physical_room = PhysicalRoom(
+            room_model_id=new_room_model.id,
+            room_number=number,
+            is_booked=False # За замовчуванням вільні
+        )
+        created_physical_rooms.append(new_physical_room)
+    
+
+    db.add_all(created_physical_rooms)
+    db.commit()
+    
+    db.refresh(new_room_model) # Оновлюємо, щоб отримати зв'язок
+    return new_room_model
 
 def get_room_by_id(db: Session, room_id: int) -> Optional[Room]:
-    return db.query(Room).filter(Room.id == room_id).first()
+    # Оновлюємо, щоб одразу завантажити інвентар
+    return db.query(Room).options(
+        joinedload(Room.physical_rooms)
+    ).filter(Room.id == room_id).first()
 
 def get_all_rooms(db: Session) -> List[Room]:
-    return db.query(Room).all()
+    # ---- ВИПРАВЛЕНО ----
+    # 1. Забираємо дубльований запит
+    # 2. Додаємо joinedload, щоб уникнути N+1 проблеми
+    #    (це завантажує всі physical_rooms одним JOIN-запитом)
+    rooms = db.query(Room).options(
+        joinedload(Room.physical_rooms) 
+    ).all()
+    
+    print(f"КІЛЬКІСТЬ ТИПІВ КІМНАТ З БД: {len(rooms)}")
+    return rooms # <-- ВИПРАВЛЕНО: повертаємо 'rooms'
 
 def update_room(db: Session, room_id: int, update_data: Dict[str, Any]) -> Optional[Room]:
     room = db.query(Room).filter(Room.id == room_id).first()
@@ -42,7 +75,8 @@ def update_room(db: Session, room_id: int, update_data: Dict[str, Any]) -> Optio
     return room
 
 def delete_room_by_id(db: Session, room_id: int) -> int:
-    db.query(Room).filter(Room.id == room_id).delete(synchronize_session=False)
+    deleted_count = db.query(Room).filter(Room.id == room_id).delete(synchronize_session=False)
     db.commit()
+    return deleted_count
 
 

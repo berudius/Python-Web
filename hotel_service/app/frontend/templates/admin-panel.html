@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Адмін-панель</title>
+    </head>
+<body>
+    <main class="container">
+        <div class="spacer"></div>
+        <h1>Адмін-панель</h1>
+
+        {% if success_message %}
+        <div class="card message-card success">
+            <p>{{ success_message }}</p>
+        </div>
+        {% endif %}
+
+        <section>
+            <h2>Керування бронюваннями ({{ all_bookings|length }})</h2>
+            {% for booking in all_bookings %}
+            <div class="card booking-card admin-view">
+                <div class="booking-card-content">
+                    <h4>Бронювання #{{ booking.id }}</h4>
+                    <p><strong>Клієнт:</strong> 
+                        {% if booking.user_id %} (ID: {{ booking.user_id }}) {% endif %}
+                        / {{ booking.phone_number }}
+                    </p>
+                    <p><strong>Дати:</strong> {{ booking.arrival_date.strftime('%d.%m.%Y') }} - {{ booking.departure_date.strftime('%d.%m.%Y') }}</p>
+                    <p><strong>Статус:</strong> {{ booking.status }}</p>
+                </div>
+                
+                <form method="post" action="/admin/bookings/status/{{ booking.id }}" style="display: flex; gap: 8px; align-items: center;">
+                    <select name="new_status">
+                        <option value="Розглядається" {% if booking.status == 'Розглядається' %}selected{% endif %}>Розглядається</option>
+                        <option value="Підтверджено" {% if booking.status == 'Підтверджено' %}selected{% endif %}>Підтверджено</option>
+                        <option value="Скасовано" {% if booking.status == 'Скасовано' %}selected{% endif %}>Скасовано</option>
+                        <option value="Завершено" {% if booking.status == 'Завершено' %}selected{% endif %}>Завершено</option>
+                    </select>
+                    <button type="submit" class="cta-secondary">Оновити</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>Керування користувачами ({{ all_users|length }})</h2>
+            {% for user in all_users %}
+             <div class="card booking-card admin-view">
+                <div class="booking-card-content">
+                    <h4>Користувач: {{ user.login }} (ID: {{ user.id }})</h4>
+                    <p><strong>Телефон:</strong> {{ user.phone_number or 'Не вказано' }}</p>
+                    <p><strong>Email:</strong> {{ user.email or 'Не вказано' }}</p>
+                    <p><strong>Рівень довіри:</strong> {{ user.trust_level }}</p>
+                </div>
+                
+                <form method="post" action="/admin/users/trust/{{ user.id }}" style="display: flex; gap: 8px; align-items: center;">
+                    <label>Новий рівень:
+                        <input type="number" name="trust_level" value="{{ user.trust_level }}" min="0" max="3" style="width: 60px;">
+                    </label>
+                    <button type="submit" class="cta-secondary">Змінити</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

@@ -91,10 +91,17 @@
         nav li {
             font-size: 15px;
             color: var(--muted);
+            font-weight: 500;
         }
 
         nav li a:hover {
             color: var(--accent);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .cta {
@@ -107,6 +114,21 @@
 
         .cta:hover {
             background: #22605e;
+        }
+
+        .cta-outline {
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            background: transparent;
+            transition: 0.2s ease;
+        }
+
+        .cta-outline:hover {
+            background: var(--accent);
+            color: white;
         }
 
         main {
@@ -304,14 +326,17 @@
 
             <nav aria-label="Головне меню">
                 <ul>
-                    <li><a href="/">Головна</a></li>
-                    <li><a href="/services">Послуги</a></li>
-                    <li><a href="/about-us">Про нас</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/">Головна</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Послуги</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
                 </ul>
             </nav>
 
-            <div>
-                <a class="cta" href="/booking">Забронювати</a>
+            <div class="actions">
+                {% if not is_authorized %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                {% endif %}
+                <a class="cta" href="/bookings">Забронювати</a>
             </div>
         </div>
     </header>
