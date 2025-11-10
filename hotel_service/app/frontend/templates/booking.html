@@ -1,520 +1,162 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мої Бронювання</title>
-
+    <title>Підтвердження бронювання - Edemium</title>
     <style>
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        .spacer {
-            height: 24px;
-        }
-
-        .card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-card form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        label {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-weight: 500;
-        }
-
-        input,
-        select,
-        button {
-            font-family: inherit;
-            font-size: 1rem;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-        }
-
-        select[multiple] {
-            padding: 0;
-        }
-
-        select[multiple] option {
-            padding: 10px 12px;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        .cta {
-            background-color: #2b7a78;
-            /* Ваш колір */
-            color: white;
-            border: none;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .cta:hover {
-            background-color: #1f5a58;
-        }
-
-        .cta-secondary {
-            background-color: #f1f5f9;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-        }
-
-        .cta-danger {
-            background-color: #f87171;
-            color: white;
-            border: none;
-        }
-
-        .message-card {
-            background-color: #fefce8;
-            border-color: #fde047;
-            color: #713f12;
-        }
-
-        /* Спискb бронювань */
-        .bookings-list {
-            margin-top: 32px;
-        }
-
-        .booking-card {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 16px;
-            align-items: start;
-        }
-
-        .booking-card h4 {
-            margin-top: 0;
-        }
-
-        .booking-card p {
-            margin-bottom: 8px;
-        }
-
-        .booking-room-list {
-            padding-left: 20px;
-            margin: 0;
-        }
-
-        .admin-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .admin-actions form {
-            margin: 0;
-        }
-
-        .admin-actions button {
-            width: 100%;
-        }
-
-        /* Модальне вікно */
-        dialog {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            padding: 0;
-            /* Паддінг вже є в .card */
-            max-width: 500px;
-            width: 90%;
-        }
-
-        dialog::backdrop {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .loading { display: none; text-align: center; }
-        .room-item { border-bottom: 1px solid #eee; padding: 8px 0; }
-        #response-message { padding: 12px; border-radius: 8px; margin-top: 16px; display: none; }
-        .success { background: #e6fefe; color: #0c4a49; }
-        .error { background: #fbebee; color: #c0392b; }
-        .tooltip { position: relative; display: inline-block; cursor: pointer; }
-        .tooltip .tooltip-text {
-            visibility: hidden; width: 250px; background-color: #555;
-            color: #fff; text-align: center; border-radius: 6px;
-            padding: 5px; position: absolute; z-index: 1;
-            bottom: 125%; left: 50%; margin-left: -125px; opacity: 0; transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        :root { --accent: #2b7a78; --muted: #6b7280; --bg: #f7fafc; --card: #ffffff; }
+        * { box-sizing: border-box; }
+        body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 0; background: var(--bg); color: #111; }
+        header { position: fixed; top: 0; left: 0; width: 100%; padding: 18px 24px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 10; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+        .nav { display: flex; align-items: center; justify-content: space-between; }
+        .brand { display: flex; align-items: center; gap: 12px; color: #111; }
+        .logo { width: 44px; height: 44px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+        nav ul { display: flex; gap: 18px; list-style: none; margin: 0; padding: 0; }
+        nav li { font-size: 15px; color: var(--muted); font-weight: 500; }
+        nav li a:hover { color: var(--accent); text-decoration: none; }
+        .actions { display: flex; align-items: center; gap: 10px; }
+        .cta { background: var(--accent); color: #fff; padding: 10px 14px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; display: inline-block; text-align: center;}
+        .cta:hover { background: #22605e; text-decoration: none; }
+        .cta-outline { border: 2px solid var(--accent); color: var(--accent); padding: 8px 14px; border-radius: 10px; font-weight: 600; background: transparent; transition: 0.2s ease; display: inline-block; text-align: center;}
+        .cta-outline:hover { background: var(--accent); color: white; text-decoration: none; }
+        main { padding-top: 120px; padding-bottom: 34px; }
+        .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     </style>
-
 </head>
-
 <body>
-
-<main class="container">
-        <div class="spacer"></div>
-        <h1>Підтвердження бронювання</h1>
-
-        <section class="card form-card">
-            <h2>Ваше замовлення</h2>
-            
-            <div id="loading-spinner" class="loading" style="display: block;">
-                <p>Завантаження обраних номерів...</p>
-            </div>
-
-            <div id="selected-rooms-list">
+    <header>
+        <div class="container nav">
+             <a href="/" class="brand">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">E</div>
+                    <div>
+                        <div style="font-weight:700">Edemium</div>
+                        <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                    </div>
                 </div>
-            
-            <h3 id="total-price" style="text-align: right;"></h3>
-            
-            <hr>
-
-            <form id="create-booking-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <label>Дата заїзду
-                        <input type="date" name="arrival_date" id="arrival_date" required>
-                    </label>
-                    <label>Дата виїзду
-                        <input type="date" name="departure_date" id="departure_date" required>
-                    </label>
-                </div>
-
-                {% if phone_number %}
-                    <p>Бронювання буде оформлено на номер: <strong>{{ phone_number }}</strong></p>
-                    
-                    {% if is_authorized %}
-                    <label>
-                        <input type="checkbox" name="use_different_phone" id="use-different-phone-toggle">
-                        Вказати інший номер (тільки для цього бронювання)
-                    </label>
-                    {% endif %}
-                {% endif %}
-
-                <div id="phone-input-container" style="{% if phone_number %}display: none;{% endif %}">
-                    <label>Ваш номер телефону
-                        <input type="tel" name="phone_number" id="phone_number" placeholder="+380991234567">
-                    </label>
-                    
-                    {% if is_authorized and not phone_number %}
-                    <label>
-                        <input type="checkbox" name="save_phone" value="true">
-                        Зберегти цей номер у моєму профілі
-                    </label>
-                    {% endif %}
-                </div>
-                
-                {% if is_authorized and trust_level > 0 %}
-                <label>
-                    <input type="checkbox" name="book_without_confirmation" value="true">
-                    Бронювання без підтвердження менеджером
-                    <span class="tooltip">(?)
-                        <span class="tooltip-text">Ви - довірений користувач. Виберіть цей пункт, якщо хочете, щоб бронювання підтверджувалося автоматично.</span>
-                    </span>
-                </label>
-                {% endif %}
-                
-                <button type="submit" class="cta" style="margin-top: 12px;">Підтвердити бронювання</button>
-            </form>
-            
-            <div id="response-message"></div>
-            
-            <a href="/my-bookings" id="view-my-bookings" class="cta-secondary" style="display: none; margin-top: 12px; text-align: center;">
-                Переглянути мої бронювання
             </a>
+            <nav aria-label="Головне меню">
+                <ul>
+                    <li><a href="/rooms">Номери</a></li>
+                    <li><a href="/services">Сервіси</a></li>
+                    <li><a href="/about_us">Про нас</a></li>
+                    <li><a href="/my-bookings">Мої бронювання</a></li>
+                </ul>
+            </nav>
+            <div class="actions">
+                {% if not is_authorized %}
+                <a class="cta-outline" href="{{ login_url }}">Увійти</a>
+                <a class="cta" href="{{ register_url }}">Зареєструватися</a>
+                {% else %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/logout">Вийти</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
 
-        </section>
+    <main class="container">
+        <h1>Підтвердження бронювання</h1>
+        <div class="card">
+            <h2>Ваші дані для бронювання</h2>
+            
+            {% if is_authorized and trust_level >= 2 %}
+            <div id="trusted-booking-section">
+                <p><strong>Ваш рівень довіри: {{ trust_level }}.</strong></p>
+                <p>Ми цінуємо вашу лояльність! Ви можете забронювати номер без додаткового підтвердження. Натисніть кнопку нижче, і ми оформимо ваше замовлення.</p>
+                <form id="trusted-booking-form">
+                     <input type="hidden" name="book_without_confirmation" value="true">
+                    <button type="submit" class="cta">Забронювати без підтвердження</button>
+                </form>
+            </div>
+            {% else %}
+            <div id="standard-booking-section">
+                 <p>Будь ласка, вкажіть контактний номер телефону. Наш адміністратор зв'яжеться з вами для підтвердження бронювання.</p>
+                <form id="booking-form">
+                    <div class="form-group">
+                        <label for="phone_number">Номер телефону</label>
+                        <input type="tel" id="phone_number" name="phone_number" value="{{ phone_number }}" required>
+                    </div>
+                     {% if is_authorized %}
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="save_phone" name="save_phone">
+                            <label for="save_phone">Зберегти цей номер в моєму профілі</label>
+                        </div>
+                    {% endif %}
+                    <button type="submit" class="cta">Забронювати</button>
+                </form>
+            </div>
+             {% endif %}
+        </div>
+        
+        {% if not is_authorized %}
+        <div class="card">
+            <h3>Маєте акаунт?</h3>
+            <p>Увійдіть, щоб бронювати швидше та керувати своїми замовленнями. <a href="{{ login_url }}">Увійти</a></p>
+            <p>Немає акаунту? <a href="{{ register_url }}">Зареєструйтесь</a>, щоб отримати доступ до історії бронювань та програми лояльності.</p>
+        </div>
+        {% endif %}
     </main>
 
-    <dialog id="edit-booking-modal">
-        <article class="card">
-            <h2>Змінити дати бронювання</h2>
-            <p>Ви можете змінити дати заїзду та виїзду. Інші деталі (кількість гостей, обрані номери) змінити не можна.
-            </p>
-
-            <form method="post" id="edit-booking-form">
-                <label>Дата заїзду
-                    <input type="date" name="arrival_date" id="edit_arrival_date" required>
-                </label>
-                <label>Дата виїзду
-                    <input type="date" name="departure_date" id="edit_departure_date" required>
-                </label>
-
-                <div class="modal-actions">
-                    <button type="button" class="cta-secondary"
-                        onclick="document.getElementById('edit-booking-modal').close()">
-                        Закрити
-                    </button>
-                    <button type="submit" class="cta">Зберегти зміни</button>
-                </div>
-            </form>
-        </article>
-    </dialog>
-
-
-
-
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const modal = document.getElementById("edit-booking-modal");
-            const editForm = document.getElementById("edit-booking-form");
-            const editArrival = document.getElementById("edit_arrival_date");
-            const editDeparture = document.getElementById("edit_departure_date");
+        // This script will handle the form submission via fetch API
+        // to provide a smoother user experience without a full page reload.
 
-            // Функція, яку викликають кнопки "Змінити дати"
-            window.openEditModal = (bookingId, arrivalDate, departureDate) => {
-                if (!modal || !editForm) return;
+        document.getElementById('trusted-booking-form')?.addEventListener('submit', handleFormSubmit);
+        document.getElementById('booking-form')?.addEventListener('submit', handleFormSubmit);
 
-                // Встановлюємо action для форми
-                editForm.action = `/bookings/edit/${bookingId}`;
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const isTrustedForm = form.id === 'trusted-booking-form';
 
-                // Встановлюємо поточні дати в поля вводу
-                // (Формат YYYY-MM-DD, який ми передали з Jinja2)
-                editArrival.value = arrivalDate;
-                editDeparture.value = departureDate;
-
-                // Показуємо модальне вікно
-                modal.showModal();
-            };
-
-            // Обробка форми створення (для валідації дат)
-            const createForm = document.getElementById("create-booking-form");
-            if (createForm) {
-                createForm.addEventListener("submit", (e) => {
-                    const arrival = document.getElementById("arrival_date").value;
-                    const departure = document.getElementById("departure_date").value;
-                    if (new Date(departure) <= new Date(arrival)) {
-                        e.preventDefault(); // Зупиняємо відправку
-                        alert("Дата виїзду має бути пізнішою за дату заїзду.");
-                    }
-                });
-            }
-
-            // Обробка форми редагування (для валідації дат)
-            if (editForm) {
-                editForm.addEventListener("submit", (e) => {
-                    if (new Date(editDeparture.value) <= new Date(editArrival.value)) {
-                        e.preventDefault(); // Зупиняємо відправку
-                        alert("Дата виїзду має бути пізнішою за дату заїзду.");
-                    }
-                });
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // 1. Отримуємо ID, збережені на сторінці номерів
-            const storedSelection = localStorage.getItem("bookingSelection");
-            if (!storedSelection) {
-                return; // Немає збережених номерів
-            }
-
-            const selectedRoomIds = JSON.parse(storedSelection);
-            if (!selectedRoomIds || selectedRoomIds.length === 0) {
-                return;
-            }
-
-            // 2. Знаходимо наш <select>
-            const roomSelect = document.querySelector("select[name='room_ids']");
-            if (!roomSelect) {
-                return;
-            }
-
-            // 3. Проходимо по всіх <option> і обираємо потрібні
-            Array.from(roomSelect.options).forEach(option => {
-                // Перетворюємо option.value (рядок) в число для коректного порівняння
-                if (selectedRoomIds.includes(parseInt(option.value, 10))) {
-                    option.selected = true;
-                }
-            });
-
-            // 4. (Опціонально, але рекомендовано)
-            // Очищуємо сховище, щоб вибір не "прилип" назавжди
-            localStorage.removeItem("bookingSelection");
-        });
-    </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // --- Елементи DOM ---
-        const roomListContainer = document.getElementById("selected-rooms-list");
-        const loadingSpinner = document.getElementById("loading-spinner");
-        const totalPriceEl = document.getElementById("total-price");
-        const bookingForm = document.getElementById("create-booking-form");
-        const responseMessageEl = document.getElementById("response-message");
-        const viewMyBookingsBtn = document.getElementById("view-my-bookings");
-        
-        // --- Контекст з Jinja2 (для JS) ---
-        const isAuthorized = {{ is_authorized | tojson }};
-        const sessionPhoneNumber = {{ phone_number | tojson }};
-
-        // --- Стан ---
-        let selectedRoomIds = [];
-        let fetchedRoomsData = [];
-
-        // 1. Головна функція ініціалізації
-        async function initializePage() {
-            const storedSelection = localStorage.getItem("bookingSelection");
-            if (!storedSelection) {
-                roomListContainer.innerHTML = "<p>Ваш кошик порожній. Будь ласка, <a href='/rooms'>оберіть номери</a>.</p>";
-                loadingSpinner.style.display = "none";
-                bookingForm.style.display = "none";
-                return;
-            }
-
-            selectedRoomIds = JSON.parse(storedSelection);
-            if (!selectedRoomIds || selectedRoomIds.length === 0) {
-                roomListContainer.innerHTML = "<p>Ваш кошик порожній.</p>";
-                loadingSpinner.style.display = "none";
-                bookingForm.style.display = "none";
-                return;
-            }
-
-            try {
-                await fetchSelectedRooms(selectedRoomIds);
-            } catch (error) {
-                roomListContainer.innerHTML = `<p class="error">Помилка завантаження даних про номери: ${error.message}</p>`;
-            } finally {
-                loadingSpinner.style.display = "none";
-            }
-        }
-
-        // 2. Функція завантаження даних про кімнати
-        async function fetchSelectedRooms(roomIds) {
-            const response = await fetch("/api/rooms/details", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ room_ids: roomIds })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || "Не вдалося отримати дані");
-            }
-
-            fetchedRoomsData = await response.json();
-            renderRoomList(fetchedRoomsData);
-        }
-
-        // 3. Функція відображення списку
-        function renderRoomList(rooms) {
-            if (rooms.length === 0) {
-                 roomListContainer.innerHTML = "<p>Обрані номери не знайдено.</p>";
-                 return;
-            }
-            
-            let total = 0;
-            let html = "<h4>Обрані номери:</h4>";
-            
-            rooms.forEach(room => {
-                html += `
-                    <div class="room-item">
-                        <strong>${room.type}</strong> (${room.guest_capacity} гост.)
-                        <span style="float: right;">${room.price.toFixed(2)} UAH</span>
-                    </div>
-                `;
-                total += room.price;
-            });
-            
-            roomListContainer.innerHTML = html;
-            
-            // Поки що загальна ціна = сума за ніч.
-            // TODO: Розрахувати на основі дат
-            totalPriceEl.textContent = `Разом (за ніч): ${total.toFixed(2)} UAH`;
-        }
-
-        // 4. Обробник відправки форми
-        bookingForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(bookingForm);
-            
-            // Збираємо дані
             const payload = {
-                room_ids: selectedRoomIds,
-                arrival_date: formData.get("arrival_date"),
-                departure_date: formData.get("departure_date"),
-                
-                // Логіка телефону
-                phone_number: formData.get("phone_number"), // Номер з форми (якщо є)
-                use_different_phone: formData.get("use_different_phone") === "on",
-                
-                // Логіка збереження/довіри
-                save_phone: formData.get("save_phone") === "true",
-                book_without_confirmation: formData.get("book_without_confirmation") === "true"
+                room_ids: JSON.parse(localStorage.getItem('selected_rooms') || '[]'),
+                arrival_date: localStorage.getItem('arrival_date'),
+                departure_date: localStorage.getItem('departure_date'),
+                phone_number: isTrustedForm ? '{{ phone_number }}' : formData.get('phone_number'),
+                save_phone: !isTrustedForm && formData.get('save_phone') === 'on',
+                book_without_confirmation: isTrustedForm
             };
 
             try {
-                const response = await fetch("/bookings/create_json", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const response = await fetch('/bookings/create_json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify(payload)
                 });
 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
                 const result = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(result.detail || "Сталася помилка");
-                }
-                
-                // УСПІХ!
-                responseMessageEl.innerHTML = `<p>${result.message}</p>`;
-                responseMessageEl.className = "success";
-                responseMessageEl.style.display = "block";
-                
-                bookingForm.style.display = "none"; // Ховаємо форму
-                localStorage.removeItem("bookingSelection"); // Очищуємо кошик
-                
-                if (isAuthorized) {
-                    viewMyBookingsBtn.style.display = "block"; // Показуємо кнопку "Мої бронювання"
-                }
-
-            } catch (error) {
-                // ПОМИЛКА
-                responseMessageEl.innerHTML = `<p>${error.message}</p>`;
-                responseMessageEl.className = "error";
-                responseMessageEl.style.display = "block";
-            }
-        });
-
-        // 5. (Додатково) Логіка для "Вказати інший номер"
-        const togglePhoneInput = document.getElementById("use-different-phone-toggle");
-        if (togglePhoneInput) {
-            togglePhoneInput.addEventListener("change", (e) => {
-                const phoneContainer = document.getElementById("phone-input-container");
-                if (e.target.checked) {
-                    phoneContainer.style.display = "block";
+                if (result.success) {
+                    // Clear local storage
+                    localStorage.removeItem('selected_rooms');
+                    localStorage.removeItem('arrival_date');
+                    localStorage.removeItem('departure_date');
+                    
+                    // Redirect to my-bookings page
+                    window.location.href = '/my-bookings';
                 } else {
-                    phoneContainer.style.display = "none";
+                    alert('Не вдалося створити бронювання: ' + result.message);
                 }
-            });
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                alert('Сталася помилка. Будь ласка, спробуйте ще раз.');
+            }
         }
-
-        // Запуск!
-        initializePage();
-    });
     </script>
-
 </body>
-
 </html>

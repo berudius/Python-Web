@@ -112,6 +112,8 @@
             padding: 10px 14px;
             border-radius: 10px;
             font-weight: 600;
+            border: none;
+            cursor: pointer;
         }
 
         .cta:hover {
@@ -135,8 +137,7 @@
 
         main {
             padding: 34px 24px;
-            margin-top: 60px;
-            /* Замість 80px, щоб бути ближче до хедера */
+            margin-top: 80px;
         }
 
         .card {
@@ -154,26 +155,8 @@
             font-weight: 700;
         }
 
-
-        /* Новий клас, який додає відступ знизу */
-        .h2-admin-margin {
-            margin-bottom: 12px;
-            margin-top: 24px;
-            /* Загальний стиль */
-        }
-
-        p {
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        /* --- Стилі для Форм (з login/reg) --- */
         .form-card {
             padding: 24px;
-        }
-
-        .spacer {
-            margin-top: 110px;
         }
 
         .form-card label {
@@ -198,11 +181,6 @@
             font-family: inherit;
         }
 
-        .form-card textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
         .form-card button[type="submit"] {
             border: none;
             cursor: pointer;
@@ -210,7 +188,6 @@
             font-size: 15px;
         }
 
-        /* --- Сітка Кімнат --- */
         .room-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -221,7 +198,6 @@
             position: relative;
             padding: 0;
             overflow: hidden;
-
             transition: box-shadow 0.2s, border-color 0.2s;
             border: 2px solid transparent;
             cursor: pointer;
@@ -236,61 +212,44 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            /* Позиціонуємо зліва, щоб не заважати кнопкам слайдера */
             z-index: 20;
-            /* Має бути вище за все, крім кнопок адміна */
-
             width: 28px;
             height: 28px;
             border-radius: 50%;
             background-color: rgba(0, 0, 0, 0.4);
-            /* Напівпрозорий фон */
             border: 2px solid rgba(255, 255, 255, 0.7);
-            /* Біла рамка */
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             cursor: pointer;
             transition: all 0.2s ease-in-out;
-
-            /* Ховаємо за замовчуванням */
             opacity: 0;
             transform: scale(0.5);
         }
 
-        /* 1. Показуємо при наведенні на картку */
-        .room-card:hover .selection-indicator {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* 2. Тримаємо видимим, якщо картка вже обрана */
+        .room-card:hover .selection-indicator,
         .room-card.selected .selection-indicator {
             opacity: 1;
             transform: scale(1);
+        }
+
+        .room-card.selected .selection-indicator {
             background-color: #2b7a78;
-            /* Колір вашої теми */
             border-color: #2b7a78;
         }
 
-        /* Стилі для "галочки" (SVG) */
         .selection-checkmark {
             width: 14px;
             height: 14px;
             opacity: 0;
-            /* Ховаємо галочку за замовчуванням */
             transition: opacity 0.2s;
         }
 
-        /* 3. Показуємо галочку, коли картка обрана */
         .room-card.selected .selection-checkmark {
             opacity: 1;
         }
 
         .booking-cta-container {
-            /* Позиціонування кнопки внизу екрана */
             position: fixed;
             bottom: 24px;
             left: 50%;
@@ -300,7 +259,6 @@
         }
 
         #booking-cta-button {
-            /* Стиль самої кнопки */
             padding: 12px 28px;
             font-size: 1.1em;
             font-weight: bold;
@@ -309,17 +267,9 @@
 
         .room-image-container {
             width: 100%;
-            height: 200px;
             background: #f0f4f6;
-
             position: relative;
             overflow: hidden;
-            /* ВАЖЛИВО: Встановлюємо співвідношення сторін 4:3 
-      (як у вашого placeholder 400x300).
-      Оскільки зображення тепер накладаються (position: absolute),
-      контейнер повинен мати чіткий розмір, інакше
-      його висота буде 0.
-    */
             aspect-ratio: 4 / 3;
         }
 
@@ -327,67 +277,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        .room-slide-image {
-            /* display: none; */
-            /* <--- ВИДАЛЕНО */
-
-            width: 100%;
-            height: 100%;
-            /* <--- ЗМІНЕНО (було auto) */
-            object-fit: cover;
-
-            /* Робимо перехід трохи довшим для "плавності" */
-            transition: opacity 0.5s ease-in-out;
-
-            /* --- ДОДАНО --- */
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            /* Ховаємо через прозорість */
-            z-index: 1;
-            /* Базовий шар */
-        }
-
-        .room-slide-image.active {
-            opacity: 1;
-            /* Робимо видимим */
-            z-index: 2;
-            /* Перекриває неактивні слайди */
-        }
-
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            background-color: rgba(0, 0, 0, 0.4);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 1.2em;
-            font-weight: bold;
-
-            /* Ховаємо кнопки за замовчуванням */
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        /* Показуємо кнопки, коли курсор наводиться на ВСЮ КАРТКУ */
-        .room-card:hover .slider-btn {
-            opacity: 1;
-        }
-
-        .slider-btn-prev {
-            left: 10px;
-        }
-
-        .slider-btn-next {
-            right: 10px;
         }
 
         .room-card-content {
@@ -404,11 +293,6 @@
             margin-bottom: 10px;
         }
 
-        .room-meta span:last-child {
-            color: var(--muted);
-            font-weight: 500;
-        }
-
         .room-card h3 {
             margin-bottom: 6px;
         }
@@ -416,13 +300,6 @@
         .room-card p {
             font-size: 14px;
             margin: 0 0 12px;
-        }
-
-        h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            margin: 0 0 8px;
         }
 
         .facilities-list {
@@ -440,71 +317,6 @@
             font-weight: 500;
             color: var(--muted);
         }
-
-        /* --- Кнопки Адміна --- */
-        .admin-actions {
-            border-top: 1px solid var(--border);
-            padding: 12px 18px;
-            background: var(--bg);
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            margin-top: 16px;
-        }
-
-        .cta-secondary,
-        .cta-danger {
-            border: 1px solid var(--border);
-            background: #fff;
-            color: var(--muted);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .cta-danger {
-            color: var(--danger);
-        }
-
-        .cta-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: #f0f9f9;
-        }
-
-        .cta-danger:hover {
-            background: #fff5f5;
-            border-color: var(--danger);
-        }
-
-
-        /* --- Футер --- */
-        footer {
-            padding: 22px 24px;
-            border-top: 1px solid var(--border);
-            background: transparent;
-            margin-top: 32px;
-        }
-
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .social {
-            display: flex;
-            gap: 8px;
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 14px;
-        }
     </style>
 </head>
 
@@ -512,254 +324,51 @@
     <header>
         <div class="container nav">
             <div class="brand">
-                <div class="logo">E</div>
-                <div>
-                    <div style="font-weight:700">Edemium</div>
-                    <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
-                </div>
+                <a href="/" style="display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">E</div>
+                    <div>
+                        <div style="font-weight:700">Edemium</div>
+                        <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                    </div>
+                </a>
             </div>
 
             <nav aria-label="Головне меню">
                 <ul>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/">Головна</a></li>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Послуги</a></li>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
+                    <li><a href="/rooms">Номери</a></li>
+                    <li><a href="/services">Сервіси</a></li>
+                    <li><a href="/about_us">Про нас</a></li>
+                    <li><a href="/my-bookings">Мої бронювання</a></li>
+                    {% if is_admin %}
+                    <li><a href="/admin/panel">Адмін панель</a></li>
+                    {% endif %}
                 </ul>
             </nav>
 
             <div class="actions">
                 {% if not is_authorized %}
                 <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                <a class="cta" href="{{ USER_SERVICE_URL }}/registration">Зареєструватися</a>
+                {% else %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/logout">Вийти</a>
                 {% endif %}
-                <a class="cta" href="/bookings">Забронювати</a>
             </div>
         </div>
     </header>
 
-    <div class="modal-overlay" id="modal-overlay" onclick="closeModals()"></div>
-
-    <div class="modal card" id="delete-modal">
-        <h3>Підтвердження</h3>
-        <p>Ви дійсно хочете видалити цей номер? Цю дію неможливо скасувати.</p>
-        <div class="modal-actions">
-            <button class="cta-secondary" onclick="closeModals()">Скасувати</button>
-
-            <form id="delete-form" method="POST" action="">
-                <button type="submit" class="cta-danger">Видалити</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal card form-card" id="edit-modal">
-        <h2>Редагувати номер</h2>
-
-        <form id="edit-form" method="POST" action="">
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <label>Тип
-                    <select id="edit-type" name="type" required>
-                        <option value="Стандарт">Стандартний номер</option>
-                        <option value="Покращений стандарт">Покращений стандарт</option>
-                        <option value="Напівлюкс">Напівлюкс</option>
-                        <option value="Люкс">Люкс</option>
-                        <option value="Президентський люкс">Президентський люкс</option>
-                    </select>
-                </label>
-                <label>Місткість (гостей)
-                    <input id="edit-guest_capacity" type="number" name="guest_capacity" step="1" required>
-                </label>
-            </div>
-
-            <label>Ціна (UAH/ніч)
-                <input id="edit-price" type="number" name="price" step="0.01" required>
-            </label>
-
-            <label>Опис
-                <textarea id="edit-description" name="description" required></textarea>
-            </label>
-
-            <label>Зручності</label>
-            <div id="edit-facilities-container" style="display: flex; flex-direction: column;"></div>
-
-            <div class="modal-actions" style="margin-top: 20px;">
-                <button type="button" class="cta-secondary" onclick="closeModals()">Скасувати</button>
-                <button type="submit" class="cta">Редагувати</button>
-            </div>
-        </form>
-    </div>
-
     <main class="container">
-
-        <div class="spacer"></div>
         {% if is_admin %}
         <section class="card form-card">
             <h2>Додати новий номер</h2>
-
             <form method="post" action="/rooms" enctype="multipart/form-data">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;">
-                    <label>Назва
-                        <input type="text" name="name" placeholder="Номер" required>
-                    </label>
-                    <label>Тип
-                        <select name="type" required>
-                            <option value="" disabled selected>Оберіть тип номера</option>
-                            <option value="Стандарт">Стандартний номер</option>
-                            <option value="Покращений стандарт">Покращений стандарт</option>
-                            <option value="Напівлюкс">Напівлюкс</option>
-                            <option value="Люкс">Люкс</option>
-                            <option value="Президентський люкс">Президентський люкс</option>
-                        </select>
-                    </label>
-                    <label>Ціна (UAH/ніч)
-                        <input type="number" name="price" step="0.01" placeholder="1500" required>
-                    </label>
-                    <label>Місткість (гостей)
-                        <input type="number" name="guest_capacity" step="1" placeholder="2" required>
-                    </label>
-                </div>
-
-                <label>Фізичні номери (через кому)
-                    <input type="text" name="room_numbers" placeholder="Напр., 101, 102, 201A" required>
-                </label>
-
-                <label>Опис
-                    <textarea name="description" placeholder="Короткий опис номера..." required></textarea>
-                </label>
-
-                <label>Зручності</label>
-                <div id="facilities-container" style="display: flex; flex-direction: column;"></div>
-
-                <label>Зображення (можна обрати декілька)
-                    <input type="file" name="images" multiple required>
-                </label>
-
-                <button type="submit" class="cta" style="margin-top: 12px;">Додати номер</button>
             </form>
         </section>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const container = document.getElementById("facilities-container");
-                if (!container) return; // Перевірка, чи елемент існує (якщо не адмін)
-
-                let draggedEl = null;
-                let placeholder = document.createElement("div");
-                placeholder.className = "facility-placeholder";
-
-                const createFacilityInput = (value = "") => {
-                    const div = document.createElement("div");
-                    div.className = "facility-item";
-                    div.draggable = true;
-                    div.innerHTML = `<input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'" value="${value}">`;
-
-                    div.addEventListener("mouseenter", () => div.classList.add("hover"));
-                    div.addEventListener("mouseleave", () => div.classList.remove("hover"));
-
-                    div.addEventListener("dragstart", e => {
-                        draggedEl = div;
-                        div.classList.add("dragging");
-                        e.dataTransfer.effectAllowed = "move";
-                        setTimeout(() => div.style.display = "none", 0);
-                    });
-
-                    div.addEventListener("dragend", () => {
-                        div.style.display = "flex";
-                        div.classList.remove("dragging");
-                        placeholder.remove();
-                        draggedEl = null;
-                    });
-
-                    div.querySelector("input").addEventListener("input", manageInputs);
-                    return div;
-                };
-
-                container.addEventListener("dragover", e => {
-                    e.preventDefault();
-                    const afterElement = getDragAfterElement(container, e.clientY);
-                    if (afterElement == null) {
-                        container.append(placeholder);
-                    } else {
-                        container.insertBefore(placeholder, afterElement);
-                    }
-                });
-
-                container.addEventListener("drop", e => {
-                    e.preventDefault();
-                    if (draggedEl) {
-                        container.insertBefore(draggedEl, placeholder);
-                    }
-                });
-
-                function getDragAfterElement(container, y) {
-                    const draggableElements = [...container.querySelectorAll(".facility-item:not(.dragging)")];
-                    return draggableElements.reduce((closest, child) => {
-                        const box = child.getBoundingClientRect();
-                        const offset = y - box.top - box.height / 2;
-                        if (offset < 0 && offset > closest.offset) {
-                            return { offset: offset, element: child };
-                        } else {
-                            return closest;
-                        }
-                    }, { offset: Number.NEGATIVE_INFINITY }).element;
-                }
-
-                function manageInputs() {
-                    const inputs = [...container.querySelectorAll("input[name='facilities']")];
-                    const empty = inputs.filter(inp => inp.value.trim() === "");
-
-                    if (empty.length === 0) {
-                        container.append(createFacilityInput());
-                    }
-
-                    if (empty.length > 1) {
-                        for (let i = 1; i < empty.length; i++) {
-                            if (container.children.length > 1) empty[i].parentElement.remove();
-                        }
-                    }
-                }
-                container.append(createFacilityInput());
-            });
-        </script>
-
-        <style>
-            .facility-item {
-                display: flex;
-                align-items: center;
-                padding: 6px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                background: white;
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
-
-            .facility-item.hover {
-                box-shadow: 0 0 5px rgba(43, 122, 120, 0.3);
-            }
-
-            .facility-item.dragging {
-                opacity: 0.5;
-            }
-
-            .facility-placeholder {
-                height: 40px;
-                border: 2px dashed #9ca3af;
-                border-radius: 8px;
-                margin: 2px 0;
-                background: rgba(230, 230, 230, 0.3);
-            }
-        </style>
         {% endif %}
 
-
-        <h2 style="margin-top: 24px;" class="{% if is_admin %}h2-admin-margin{% endif %}">
-            Наші номери
-        </h2>
-
+        <h2 style="margin-top: 24px;">Наші номери</h2>
         <div class="room-grid">
-
             {% for ctx in room_contexts %}
             <div class="card room-card" data-room-id="{{ ctx.data.id }}">
-
                 <div class="selection-indicator">
                     <svg class="selection-checkmark" viewBox="0 0 24 24">
                         <path fill="none" stroke="white" stroke-width="3" d="M1.7 12.9l6.6 6.6L22.3 5.5" />
@@ -768,104 +377,24 @@
                 <div class="room-image-container">
                     {% set images = ctx.images %}
                     {% if images %}
-
-                    {% for image_url in images %}
-                    <img src="{{ image_url }}" alt="{{ ctx.data.type }} image {{ loop.index }}"
-                        class="room-slide-image {% if loop.first %}active{% endif %}">
-                    {% endfor %}
-
-                    {% if images|length > 1 %}
-                    <button class="slider-btn slider-btn-prev" aria-label="Previous image">&lt;</button>
-                    <button class="slider-btn slider-btn-next" aria-label="Next image">&gt;</button>
-                    {% endif %}
-
+                    <img src="{{ images[0] }}" alt="{{ ctx.data.type }} image">
                     {% else %}
                     <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Edemium" alt="Фото відсутнє">
                     {% endif %}
                 </div>
-
                 <div class="room-card-content">
                     <div class="room-meta">
                         <span>{{ "%.2f"|format(ctx.data.price) }} UAH / ніч</span>
-                        <span>{{ ctx.data.guest_capacity }} гост...</span>
+                        <span>{{ ctx.data.guest_capacity }} гостя(ей)</span>
                     </div>
                     <h3>{{ ctx.data.type }}</h3>
                     <p>{{ ctx.data.description }}</p>
-                    {% if is_admin %}
-                    <style>
-                        .physical-room-map {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 6px;
-                            margin-bottom: 12px;
-                        }
-
-                        .physical-room-unit {
-                            font-size: 0.8em;
-                            font-weight: bold;
-                            padding: 4px 8px;
-                            border-radius: 4px;
-                            border: 1px solid #ccc;
-                            background-color: #e6fefe;
-                            /* Колір вільного (світлий) */
-                            color: #0c4a49;
-                            cursor: default;
-                            transition: all 0.2s;
-                        }
-
-                        .physical-room-unit.booked {
-                            background-color: #6c757d;
-                            /* Колір зайнятого (темний) */
-                            border-color: #5a6268;
-                            color: white;
-                            text-decoration: line-through;
-                        }
-
-                        /* Інфо про доступність для звичайного користувача */
-                        .availability-info {
-                            font-size: 0.9em;
-                            background-color: #f4f4f4;
-                            padding: 8px 12px;
-                            border-radius: 6px;
-                            margin-bottom: 12px;
-                        }
-                    </style>    
-                    <h4>Інвентаризація ({{ ctx.available_count }} / {{ ctx.total_count }} вільно):</h4>
-                    <div class="physical-room-map">
-                        {% for pr in ctx.physical_rooms %}
-                        <span class="physical-room-unit {% if pr.is_booked %}booked{% endif %}"
-                            title="Номер {{ pr.room_number }} - {% if pr.is_booked %}Зайнято{% else %}Вільно{% endif %}">
-                            {{ pr.room_number }}
-                        </span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <div class="availability-info">
-                        Доступно номерів: <strong>{{ ctx.available_count }}</strong>
-                    </div>
-                    {% endif %}
-                    <h4>Зручності:</h4>
                     <div class="facilities-list">
                         {% for facility in ctx.data.facilities %}
                         <span class="facility-pill">{{ facility }}</span>
                         {% endfor %}
                     </div>
                 </div>
-
-                {% if is_admin %}
-                <div class="admin-actions">
-
-                    <button class="cta-secondary" data-room='{{ ctx.json | tojson | safe }}'
-                        onclick="openEditModal(this)">
-                        Редагувати
-                    </button>
-
-                    <button class="cta-danger" data-id="{{ ctx.data.id }}" onclick="openDeleteModal(this)">
-                        Видалити
-                    </button>
-                </div>
-                {% endif %}
-
             </div>
             {% endfor %}
         </div>
@@ -876,385 +405,46 @@
             Бронювати (0)
         </button>
     </div>
-
-    <footer>
-        <div class="container footer-inner">
-            <div>
-                <div style="font-weight:700">Edemium</div>
-                <div class="muted">© 2025 Edemium. Всі права захищені.</div>
-            </div>
-
-            <div class="social muted">Instagram • Facebook • LinkedIn</div>
-        </div>
-    </footer>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-
-            // ... (ваш існуючий код для 'facilities-container') ...
-
-            // ... (ваш існуючий код для 'booking-cta-container' та 'handleRoomClick') ...
-
-            // ======== ПОЧАТОК НОВОГО КОДУ ДЛЯ СЛАЙДЕРА ========
-
-            // 1. Знаходимо всі картки номерів
-            const allRoomCards = document.querySelectorAll(".room-card");
-
-            // 2. Ініціалізуємо слайдер для КОЖНОЇ картки окремо
-            allRoomCards.forEach(card => {
-                const container = card.querySelector(".room-image-container");
-                if (!container) return; // Про всяк випадок
-
-                const prevButton = container.querySelector(".slider-btn-prev");
-                const nextButton = container.querySelector(".slider-btn-next");
-                const images = container.querySelectorAll(".room-slide-image");
-
-                // Якщо зображень 1 або 0, кнопок не буде, тому нічого не робимо
-                if (images.length <= 1 || !prevButton) {
-                    return;
-                }
-
-                // 'let' гарантує, що індекс унікальний для кожної картки
-                let currentSlideIndex = 0;
-
-                // Функція для показу конкретного слайду
-                function showSlide(index) {
-                    // Ховаємо поточний активний слайд
-                    images[currentSlideIndex].classList.remove("active");
-
-                    // Оновлюємо індекс
-                    currentSlideIndex = index;
-
-                    // Показуємо новий активний слайд
-                    images[currentSlideIndex].classList.add("active");
-                }
-
-                // 3. Вішаємо обробники на кнопки
-                nextButton.addEventListener("click", (e) => {
-                    // ДУЖЕ ВАЖЛИВО:
-                    // Зупиняємо "спливання" події, щоб клік по кнопці
-                    // не активував вибір кімнати для бронювання.
-                    e.stopPropagation();
-                    e.preventDefault();
-
-                    let newIndex = currentSlideIndex + 1;
-                    if (newIndex >= images.length) {
-                        newIndex = 0; // Переходимо на початок
-                    }
-                    showSlide(newIndex);
-                });
-
-                prevButton.addEventListener("click", (e) => {
-                    e.stopPropagation(); // Так само зупиняємо спливання
-                    e.preventDefault();
-
-                    let newIndex = currentSlideIndex - 1;
-                    if (newIndex < 0) {
-                        newIndex = images.length - 1; // Переходимо в кінець
-                    }
-                    showSlide(newIndex);
-                });
-            });
-
-            // ======== КІНЕЦЬ НОВОГО КОДУ ДЛЯ СЛАЙДЕРА ========
-        });
-    </script>
-
-    <style>
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            display: none;
-        }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 101;
-            display: none;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        .modal.form-card {
-            padding-top: 24px;
-            padding-bottom: 24px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .modal-actions form {
-            margin: 0;
-        }
-    </style>
-
-    <script>
-        // Отримуємо посилання на елементи
-        const overlay = document.getElementById('modal-overlay');
-        const deleteModal = document.getElementById('delete-modal');
-        const editModal = document.getElementById('edit-modal');
-        const deleteForm = document.getElementById('delete-form');
-        const editForm = document.getElementById('edit-form');
-
-        // Поля форми редагування
-        const editType = document.getElementById('edit-type');
-        const editGuestCapacity = document.getElementById('edit-guest_capacity');
-        const editPrice = document.getElementById('edit-price');
-        const editDescription = document.getElementById('edit-description');
-        const editFacilitiesContainer = document.getElementById('edit-facilities-container');
-
-        function openDeleteModal(button) {
-            // 1. Отримуємо ID з data-атрибута
-            const roomId = button.getAttribute('data-id');
-            // 2. Викликаємо вашу СТАРУ функцію з цим ID
-            showDeleteModal(roomId);
-        }
-
-        function openEditModal(button) {
-            // 1. Отримуємо рядок JSON з data-атрибута
-            const roomDataString = button.getAttribute('data-room');
-            // 2. Перетворюємо рядок назад у JavaScript-об'єкт
-            const roomObject = JSON.parse(roomDataString);
-            // 3. Викликаємо вашу СТАРУ функцію з цим об'єктом
-            showEditModal(roomObject);
-        }
-
-        // Функція для закриття ВСІХ модальних вікон
-        function closeModals() {
-            overlay.style.display = 'none';
-            deleteModal.style.display = 'none';
-            editModal.style.display = 'none';
-        }
-
-        // --- 1. Логіка вікна "Видалити" ---
-        function showDeleteModal(roomId) {
-            deleteForm.action = `/rooms/delete/${roomId}`;
-            overlay.style.display = 'block';
-            deleteModal.style.display = 'block';
-        }
-
-        // --- 2. Логіка вікна "Редагувати" ---
-
-        // Функції для динамічних полів "facilities" у вікні редагування
-        const createEditFacilityInput = (value = "") => {
-            const div = document.createElement("div");
-            div.className = "facility-item";
-            div.innerHTML = `<input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'" value="${value}">`;
-            div.querySelector("input").addEventListener("input", manageEditInputs);
-            return div;
-        };
-
-        function manageEditInputs() {
-            const inputs = [...editFacilitiesContainer.querySelectorAll("input[name='facilities']")];
-            const empty = inputs.filter(inp => inp.value.trim() === "");
-
-            if (empty.length === 0) {
-                editFacilitiesContainer.append(createEditFacilityInput());
-            }
-
-            if (empty.length > 1) {
-                for (let i = 1; i < empty.length; i++) {
-                    if (editFacilitiesContainer.children.length > 1) empty[i].parentElement.remove();
-                }
-            }
-        }
-
-        // Головна функція для показу вікна редагування
-        function showEditModal(room) {
-            // 1. Встановлюємо 'action' для форми
-            editForm.action = `/rooms/edit/${room.id}`;
-
-            // 2. Заповнюємо поля форми даними з об'єкта room
-            editType.value = room.type;
-            editGuestCapacity.value = room.guest_capacity;
-            editPrice.value = room.price;
-            editDescription.value = room.description;
-
-            // 3. Динамічно генеруємо поля "facilities"
-            editFacilitiesContainer.innerHTML = ''; // Очищуємо старі
-            if (room.facilities && room.facilities.length > 0) {
-                room.facilities.forEach(facility => {
-                    editFacilitiesContainer.append(createEditFacilityInput(facility));
-                });
-            }
-            editFacilitiesContainer.append(createEditFacilityInput()); // Додаємо одне пусте поле
-
-            // 4. Показуємо overlay та модальне вікно
-            overlay.style.display = 'block';
-            editModal.style.display = 'block';
-        }
-
-    </script>
-
-    <script>
-        // Скрипт для приховування хедера при прокрутці
-        let lastScroll = 0;
-        const header = document.querySelector("header");
-
-        window.addEventListener("scroll", () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll <= 0) {
-                header.classList.remove("hide");
-                header.classList.add("show");
-                return;
-            }
-
-            if (currentScroll > lastScroll && !header.classList.contains("hide")) {
-                // Scroll Down
-                header.classList.remove("show");
-                header.classList.add("hide");
-            } else if (currentScroll < lastScroll && header.classList.contains("hide")) {
-                // Scroll Up
-                header.classList.remove("hide");
-                header.classList.add("show");
-            }
-
-            lastScroll = currentScroll;
-        });
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-
-            // --- Елементи DOM ---
             const roomCards = document.querySelectorAll(".room-card");
             const bookingCtaContainer = document.getElementById("booking-cta-container");
             const bookingCtaButton = document.getElementById("booking-cta-button");
-
-            // --- Стан (State) ---
             const selectedRoomIds = new Set();
-            const LONG_PRESS_DURATION = 500; // 500 мілісекунд для довгого натиску
 
-            // --- Функція оновлення кнопки "Бронювати" ---
             function updateBookingButton() {
                 const count = selectedRoomIds.size;
-                if (count > 0) {
-                    bookingCtaButton.textContent = `Бронювати (${count})`;
-                    bookingCtaContainer.style.display = "block";
-                } else {
-                    bookingCtaContainer.style.display = "none";
-                }
+                bookingCtaButton.textContent = `Бронювати (${count})`;
+                bookingCtaContainer.style.display = count > 0 ? "block" : "none";
             }
 
-            // --- Обробник кліку на кнопку "Бронювати" ---
             function handleBookingSubmit() {
-                if (selectedRoomIds.size === 0) {
-                    alert("Будь ласка, оберіть хоча б один номер.");
-                    return;
+                if (selectedRoomIds.size > 0) {
+                    localStorage.setItem("bookingSelection", JSON.stringify([...selectedRoomIds]));
+                    window.location.href = "/bookings";
                 }
-                const idsToBook = [...selectedRoomIds];
-                localStorage.setItem("bookingSelection", JSON.stringify(idsToBook));
-                window.location.href = "/bookings";
             }
 
-            // --- НОВА УНІВЕРСАЛЬНА ФУНКЦІЯ: Перемикач вибору ---
-            function toggleSelection(card) {
-                const roomId = card.dataset.roomId;
-                if (!roomId) return;
-
-                if (selectedRoomIds.has(roomId)) {
-                    selectedRoomIds.delete(roomId);
-                    card.classList.remove("selected");
-                } else {
-                    selectedRoomIds.add(roomId);
-                    card.classList.add("selected");
-                }
-                updateBookingButton();
-            }
-
-            // --- ОНОВЛЕНА Прив'язка обробників (для кожної картки) ---
             roomCards.forEach(card => {
-                let longPressTimer;
-                const selectionCircle = card.querySelector(".selection-indicator");
-                const roomId = card.dataset.roomId;
-
-                // =============================================
-                // 1. ЛОГІКА: Клік на індикатор
-                // =============================================
-                if (selectionCircle) {
-                    selectionCircle.addEventListener("click", (e) => {
-                        // Зупиняємо "спливання" події, щоб не спрацював
-                        // короткий клік (навігація) по картці.
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toggleSelection(card);
-                    });
-                }
-
-                // =============================================
-                // 2. ЛОГІКА: Довгий натиск (Long Press)
-                // =============================================
-                card.addEventListener("mousedown", (e) => {
-                    // Не починати таймер, якщо клік був на будь-якій кнопці
-                    if (e.target.closest('button') || e.target.closest('.admin-actions') || e.target.closest('.selection-indicator')) {
-                        return;
-                    }
-
-                    // Встановлюємо "позначку" - чи відбувся довгий натиск
-                    card.dataset.longPress = "false";
-
-                    longPressTimer = setTimeout(() => {
-                        toggleSelection(card);
-                        card.dataset.longPress = "true"; // Позначаємо, що дія виконана
-                    }, LONG_PRESS_DURATION);
-                });
-
-                // Якщо відпустили кнопку миші до 500мс - скасовуємо таймер
-                card.addEventListener("mouseup", () => {
-                    clearTimeout(longPressTimer);
-                });
-
-                // Якщо повели мишу геть, утримуючи кнопку, - скасовуємо
-                card.addEventListener("mouseleave", () => {
-                    clearTimeout(longPressTimer);
-                });
-
-                // =============================================
-                // 3. ЛОГІКА: Короткий клік (Навігація)
-                // =============================================
                 card.addEventListener("click", (e) => {
-                    // Ігноруємо клік, якщо він був на будь-якому інтерактивному елементі
-                    if (e.target.closest('button') || e.target.closest('.admin-actions') || e.target.closest('.selection-indicator')) {
-                        return;
+                    if (e.target.closest('button, .admin-actions')) return;
+                    const roomId = card.dataset.roomId;
+                    if (!roomId) return;
+                    if (selectedRoomIds.has(roomId)) {
+                        selectedRoomIds.delete(roomId);
+                        card.classList.remove("selected");
+                    } else {
+                        selectedRoomIds.add(roomId);
+                        card.classList.add("selected");
                     }
-
-                    // Якщо щойно відбувся довгий натиск - не переходити
-                    if (card.dataset.longPress === "true") {
-                        card.dataset.longPress = "false"; // Скидаємо прапорець
-                        return; // Не виконуємо навігацію
-                    }
-
-                    // Якщо ми тут, це був "чистий" короткий клік.
-                    // Виконуємо навігацію:
-                    if (roomId) {
-                        window.location.href = `/rooms/${roomId}`;
-                    }
+                    updateBookingButton();
                 });
             });
 
-            // --- Прив'язка для кнопки "Бронювати" ---
             if (bookingCtaButton) {
                 bookingCtaButton.addEventListener("click", handleBookingSubmit);
             }
-
-            // --- Ініціалізація стану кнопки ---
-            updateBookingButton();
         });
     </script>
 </body>
-
 </html>

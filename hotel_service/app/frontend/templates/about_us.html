@@ -1,462 +1,103 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Про нас - Edemium</title>
     <style>
-        :root {
-            --accent: #2b7a78;
-            --muted: #6b7280;
-            --bg: #f7fafc;
-            --card: #ffffff;
-            --danger: #d9534f;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            margin: 0;
-            background: var(--bg);
-            color: #111;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 18px 24px;
-            background: white;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            z-index: 10;
-        }
-
-        header.hide {
-            transform: translateY(-100%);
-        }
-
-        header.show {
-            transform: translateY(0);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-        }
-
-        nav ul {
-            display: flex;
-            gap: 18px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav li {
-            font-size: 15px;
-            color: var(--muted);
-            font-weight: 500;
-        }
-
-        nav li a:hover {
-            color: var(--accent);
-        }
-
-        .actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cta {
-            background: var(--accent);
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .cta:hover {
-            background: #22605e;
-        }
-
-        .cta-outline {
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 600;
-            background: transparent;
-            transition: 0.2s ease;
-        }
-
-        .cta-outline:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        main {
-            padding-top: 100px;
-            /* Space for fixed header */
-            padding-bottom: 34px;
-        }
-
-        .title-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 28px;
-            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
-            margin-bottom: 18px;
-            margin-top: 95px;
-        }
-
-        .title-card h1 {
-            margin: 0 0 8px;
-            font-size: 28px;
-        }
-
-        .title-card p {
-            margin: 0;
-            color: var(--muted);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 18px;
-        }
-
-        .card {
-            background: var(--card);
-            padding: 24px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
-        }
-
-        .section {
-            margin-bottom: 16px;
-        }
-
-        h2 {
-            margin: 0 0 10px;
-        }
-
-        footer {
-            padding: 22px 24px;
-            border-top: 1px solid #e6eef0;
-            background: transparent;
-        }
-
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .social {
-            display: flex;
-            gap: 8px;
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .contacts-panel {
-            max-width: 320px;
-        }
-
-        .contact-toggle {
-            width: 100%;
-            background: transparent;
-            border: 1px solid #e6eef0;
-            padding: 10px 12px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .contact-body {
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #fff;
-            border: 1px solid #f0f4f6;
-            display: none;
-        }
-
-        /* --- Form Styles (для login/register) --- */
-        .form-wrapper {
-            max-width: 450px;
-            margin: 0 auto;
-        }
-
-        .form-wrapper h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .form-wrapper label {
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 500;
-            font-size: 15px;
-        }
-
-        .form-wrapper input[type="text"],
-        .form-wrapper input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #e6eef0;
-            border-radius: 8px;
-            font-size: 15px;
-            margin-top: 4px;
-        }
-
-        .form-wrapper input[type="text"]:focus,
-        .form-wrapper input[type="password"]:focus {
-            outline: 2px solid var(--accent);
-            border-color: var(--accent);
-        }
-
-        .form-wrapper .btn-submit {
-            background: var(--accent);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .form-wrapper .btn-submit:hover {
-            background: #22605e;
-        }
-
-        .form-wrapper p {
-            text-align: center;
-            margin-top: 15px;
-            color: var(--muted);
-        }
-
-        .form-wrapper p a {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .form-wrapper p a:hover {
-            text-decoration: underline;
-        }
-
-        .form-wrapper .error {
-            color: var(--danger);
-            text-align: center;
-            margin-bottom: 15px;
-            background: #fddede;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .form-wrapper .success {
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 15px;
-            background: #def7f6;
-            padding: 10px;
-            border-radius: 8px;
-        }
+        :root { --accent: #2b7a78; --muted: #6b7280; --bg: #f7fafc; --card: #ffffff; }
+        * { box-sizing: border-box; }
+        body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 0; background: var(--bg); color: #111; }
+        header { position: fixed; top: 0; left: 0; width: 100%; padding: 18px 24px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 10; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+        .nav { display: flex; align-items: center; justify-content: space-between; }
+        .brand { display: flex; align-items: center; gap: 12px; color: #111; }
+        .logo { width: 44px; height: 44px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+        nav ul { display: flex; gap: 18px; list-style: none; margin: 0; padding: 0; }
+        nav li { font-size: 15px; color: var(--muted); font-weight: 500; }
+        nav li a:hover { color: var(--accent); text-decoration: none; }
+        .actions { display: flex; align-items: center; gap: 10px; }
+        .cta { background: var(--accent); color: #fff; padding: 10px 14px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; display: inline-block; text-align: center; }
+        .cta:hover { background: #22605e; text-decoration: none; }
+        .cta-outline { border: 2px solid var(--accent); color: var(--accent); padding: 8px 14px; border-radius: 10px; font-weight: 600; background: transparent; transition: 0.2s ease; display: inline-block; text-align: center; }
+        .cta-outline:hover { background: var(--accent); color: white; text-decoration: none; }
+        main { padding-top: 120px; padding-bottom: 34px; }
+        .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+        .section { margin-bottom: 24px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        h1, h2 { color: #1a202c; }
+        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 40px; }
+        h2 { font-size: 1.5rem; margin-top: 0; }
+        p { line-height: 1.6; color: var(--muted); }
+        ul { list-style-type: disc; padding-left: 20px; color: var(--muted); }
+        li { margin-bottom: 10px; }
     </style>
 </head>
-
 <body>
     <header>
-        <div class="container nav">
-            <div class="brand">
-                <div class="logo">E</div>
-                <div>
-                    <div style="font-weight:700">Edemium</div>
-                    <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+         <div class="container nav">
+             <a href="/" class="brand">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="logo">E</div>
+                    <div>
+                        <div style="font-weight:700">Edemium</div>
+                        <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                    </div>
                 </div>
-            </div>
-
+            </a>
             <nav aria-label="Головне меню">
                 <ul>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/">Головна</a></li>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Послуги</a></li>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
+                    <li><a href="/rooms">Номери</a></li>
+                    <li><a href="/services">Сервіси</a></li>
+                    <li><a href="/about_us">Про нас</a></li>
+                    <li><a href="/my-bookings">Мої бронювання</a></li>
                 </ul>
             </nav>
-
             <div class="actions">
-                {% if not is_authorized %}
-                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                 {% if not is_authorized %}
+                <a class="cta-outline" href="{{ login_url }}">Увійти</a>
+                <a class="cta" href="{{ register_url }}">Зареєструватися</a>
+                {% else %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/logout">Вийти</a>
                 {% endif %}
-                <a class="cta" href="/bookings">Забронювати</a>
             </div>
         </div>
     </header>
-
     <main class="container">
-        <section class="title-card">
-            <h1>Edemium — цифрова система для гостей і готельного бізнесу</h1>
-            <p>Edemium створено на замовлення готельної мережі, щоб зробити перебування гостей зручнішим та підвищити
-                ефективність використання послуг готелю.</p>
-        </section>
-
+        <h1>Про Edemium</h1>
         <div class="grid">
             <div>
                 <section id="about" class="card section">
                     <h2>Про нас</h2>
-                    <p>Edemium — це система, яка дозволяє гостям швидко знайти інформацію про вільні номери,
-                        переглянути фотографії та обрати найкращий варіант для свого перебування.</p>
+                    <p>Edemium — це сучасний цифровий сервіс, що модернізує взаємодію гостей з готелем. Ми надаємо зручний інтерфейс для швидкого пошуку, вибору та бронювання номерів онлайн.</p>
                 </section>
 
                 <section class="card section">
-                    <h2>Проблема і рішення</h2>
-                    <p>Часто гостям доводиться витрачати час на дзвінки, щоб дізнатися про наявність номерів.
-                        Edemium централізує всю інформацію про номерний фонд в одному інтерфейсі, щоб кожен міг
-                        швидко знайти та (у майбутньому) забронювати житло.</p>
+                    <h2>Проблема, яку ми вирішуємо</h2>
+                    <p>Ми позбавляємо гостей від необхідності витрачати час на дзвінки та очікування, щоб дізнатися про наявність номерів. Edemium централізує всю актуальну інформацію, дозволяючи забронювати житло за кілька кліків.</p>
                 </section>
-
-                <section class="card section">
+                
+                 <section class="card section">
                     <h2>Місія</h2>
-                    <p>Наша мета — зробити послуги готелю прозорими та доступними, а для власника — відкрити нові
-                        можливості
-                        монетизації за рахунок зростання середнього чека та повторних бронювань.</p>
-                </section>
-
-                <section id="services" class="card section">
-                    <h2>Функціонал</h2>
-                    <p>Наразі Edemium дозволяє переглядати деталізовану інформацію про всі номери нашого готелю.
-                        У найближчому майбутньому ми додамо функцію онлайн-бронювання та оплати.</p>
+                    <p>Наша мета — зробити готельні послуги прозорими, доступними та зручними для гостей, а для власників — надати потужний інструмент для залучення клієнтів та підвищення їхньої лояльності.</p>
                 </section>
             </div>
-
-            <aside class="contacts-panel">
-                <div class="card">
-                    <button class="contact-toggle" aria-expanded="false" id="contactToggle">Контакти &nbsp; <span
-                            aria-hidden="true">▾</span></button>
-                    <div id="contactBody" class="contact-body" aria-hidden="true">
-                        <p style="margin:6px 0"><strong>Адреса:</strong><br>вул. Прикладівська, 10, Київ, Україна</p>
-                        <p style="margin:6px 0"><strong>Телефон:</strong><br>+380 44 123 4567</p>
-                        <p style="margin:6px 0"><strong>Email:</strong><br>info@edemium.example</p>
-                        <p style="margin:6px 0" class="muted">Графік роботи: Пн–Нд 08:00–20:00</p>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-top:12px">
-                    <h3 style="margin:0 0 8px">Швидкі посилання</h3>
-                    <ul style="padding-left:18px; margin:0; color:var(--muted)">
-                        <li>Політика конфіденційності</li>
-                        <li>Правила користування</li>
-                        <li>FAQ</li>
+            
+            <div>
+                <section id="services" class="card section">
+                    <h2>Наш функціонал</h2>
+                    <p>Наразі Edemium пропонує гостям повний цикл взаємодії з готелем:</p>
+                    <ul>
+                        <li><b>Каталог номерів:</b> Детальний перегляд номерів з фото, описом та цінами.</li>
+                        <li><b>Онлайн-бронювання:</b> Можливість забронювати один або кілька номерів на обрані дати.</li>
+                        <li><b>Особистий кабінет:</b> Зареєстровані користувачі можуть переглядати історію та керувати статусами своїх бронювань.</li>
+                        <li><b>Система довіри:</b> Автоматизована програма лояльності, яка винагороджує постійних клієнтів, надаючи їм переваги, наприклад, бронювання без підтвердження дзвінком.</li>
+                        <li><b>Гнучкість для гостей:</b> Можливість бронювати номери без обов'язкової реєстрації.</li>
                     </ul>
-                </div>
-            </aside>
+                </section>
+            </div>
         </div>
     </main>
-
-    <footer>
-        <div class="container footer-inner">
-            <div>
-                <div style="font-weight:700">Edemium</div>
-                <div class="muted">© 2025 Edemium. Всі права захищені.</div>
-            </div>
-
-            <div class="contacts">
-                <div class="social muted">Instagram • Facebook • LinkedIn</div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Скрипт для випадаючих контактів
-        const toggle = document.getElementById('contactToggle');
-        const body = document.getElementById('contactBody');
-        toggle.addEventListener('click', () => {
-            const expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!expanded));
-
-            if (!expanded) {
-                body.style.display = 'block';
-                body.setAttribute('aria-hidden', 'false');
-                toggle.querySelector('span').textContent = '▴';
-            } else {
-                body.style.display = 'none';
-                body.setAttribute('aria-hidden', 'true');
-                toggle.querySelector('span').textContent = '▾';
-            }
-        });
-
-        // Скрипт для ховання хедера при скролі
-        let lastScroll = 0;
-        const header = document.querySelector("header");
-
-        window.addEventListener("scroll", () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll <= 0) {
-                header.classList.remove("hide");
-                header.classList.add("show");
-                return;
-            }
-
-            if (currentScroll > lastScroll) {
-                header.classList.remove("show");
-                header.classList.add("hide");
-            } else {
-                header.classList.remove("hide");
-                header.classList.add("show");
-            }
-
-            lastScroll = currentScroll;
-        });
-    </script>
 </body>
-
 </html>
