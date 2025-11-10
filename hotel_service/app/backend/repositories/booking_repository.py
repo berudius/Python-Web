@@ -94,3 +94,27 @@ def delete_booking_by_id(db: Session, booking_id: int):
         db.commit()
         return True
     return False
+
+def update_booking_status(db: Session, booking_id: int, new_status: str) -> Optional[Booking]:
+    # 1. Знаходимо бронювання в базі даних
+    booking_to_update = db.query(Booking).filter(Booking.id == booking_id).first()
+
+    # 2. Якщо бронювання знайдене, оновлюємо його
+    if booking_to_update:
+        booking_to_update.status = new_status
+        db.commit()
+        db.refresh(booking_to_update)
+        return booking_to_update
+    
+    # 3. Якщо бронювання не знайдено, повертаємо None
+    return None
+
+def count_bookings_by_status(db: Session, user_id: int, status: str) -> int:
+    """
+    Підраховує кількість бронювань для конкретного користувача
+    з певним статусом.
+    """
+    return db.query(Booking).filter(
+        Booking.user_id == user_id,
+        Booking.status == status
+    ).count()

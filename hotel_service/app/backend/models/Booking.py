@@ -14,8 +14,8 @@ class Booking(Base):
     departure_date = Column(Date, nullable=False)
 
     user_id = Column(Integer, nullable=True)
-    phone_number = Column(String, nullable=False, index=True)
-    status = Column(String, nullable=False, default="Розглядається")
+    phone_number = Column((String(20)), nullable=False, index=True)
+    status = Column(String(50), nullable=False, default="Розглядається")
 
     rooms = relationship("Room", secondary=booking_room_association, back_populates="bookings")
 

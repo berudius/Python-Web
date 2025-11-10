@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends, Form,  status
 from sqlalchemy.orm import Session
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.exceptions import HTTPException
 from fastapi_redis_session import getSession
 from httpx import AsyncClient, HTTPStatusError
@@ -88,7 +88,6 @@ async def get_booking_confirmation_page(
         return templates.TemplateResponse("booking.html", context)
 
     except Exception as e:
-        print("PIZDOS" + e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
@@ -162,7 +161,7 @@ async def create_booking_json(
 
             # Логіка статусу для довірених
             if trust_level > 0 and payload.book_without_confirmation:
-                booking_status = "Підтверджено"
+                booking_status = "Розглядається"
 
         else:
             # --- ЛОГІКА ГОСТЯ ---
@@ -276,18 +275,43 @@ async def cancel_my_booking(
 @router.get("/admin/panel")
 async def get_admin_panel(
     request: Request,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db) # db все ще потрібен для booking_repository
 ):
-    # (Тут має бути перевірка на admin role)
     session = getSession(request=request, sessionStorage=session_storage)
     if not session or session.get("user_role") != "admin":
         raise HTTPException(status_code=403, detail="Доступ заборонено")
         
+    all_users_list = []
+    
+    # --- 1. Отримуємо користувачів з User-Service ---
+    try:
+        async with AsyncClient() as client:
+            # Робимо запит до User-Service, щоб отримати ВСІХ користувачів
+            # Припускаємо, що User-Service має ендпоінт GET /users
+            response = await client.get(f"{USER_SERVICE_URL}/users")
+            
+            # Перевіряємо на помилки 4xx/5xx
+            response.raise_for_status() 
+            
+            all_users_list = response.json()
+            
+    except Exception as e:
+        # Якщо User-Service недоступний, сторінка все одно завантажиться,
+        # але список користувачів буде порожнім.
+        print(f"Помилка завантаження користувачів з User-Service: {e}")
+        # Можна встановити повідомлення про помилку в сесію, якщо потрібно
+        # session.set("admin_error", "Не вдалося завантажити список користувачів.")
+        pass # Залишаємо all_users_list як []
+
+    # --- 2. Отримуємо бронювання з локальної БД ---
+    all_bookings_list = booking_repository.get_all_bookings(db)
+        
     context = {
         "request": request,
         "success_message": session.pop("admin_success"),
-        "all_bookings": booking_repository.get_all_bookings(db),
-        "all_users": user_repository.get_all_users(db) # (Потрібен user_repository)
+        # "error_message": session.pop("admin_error"), # Якщо ви додали
+        "all_bookings": all_bookings_list,
+        "all_users": all_users_list  # <-- Використовуємо дані з HTTP-запиту
     }
     return templates.TemplateResponse("admin-panel.html", context)
 
@@ -302,10 +326,50 @@ async def admin_update_booking_status(
     if not session or session.get("user_role") != "admin":
         raise HTTPException(status_code=403, detail="Доступ заборонено")
     
+    booking = booking_repository.get_booking_by_id(db, booking_id)
+    if not booking:
+        raise HTTPException(status_code=404, detail="Бронювання не знайдено")
+        
+    user_id_to_check = booking.user_id 
+    
     booking_repository.update_booking_status(db, booking_id, new_status)
-    session.set("admin_success", f"Статус бронювання #{booking_id} оновлено на '{new_status}'")
-    return RedirectResponse(url="/admin/panel", status_code=status.HTTP_303_SEE_OTHER)
+    
+    trust_update_message = "" 
+    
+    # --- ВАША ПЕРЕВІРКА ВЖЕ ТУТ ---
+    # Якщо booking.user_id був None (для гостя), 
+    # то user_id_to_check буде None,
+    # і умова 'and user_id_to_check' не виконається (буде False).
+    # Весь блок 'if' буде пропущено.
+    if new_status == "Завершено" and user_id_to_check:
+        
+        completed_count = booking_repository.count_bookings_by_status(
+            db, 
+            user_id=user_id_to_check, 
+            status="Завершено"
+        )
+        
+        if completed_count == 2:
+            try:
+                user_data = await get_user_data_from_service(user_id_to_check)
+                
+                if user_data:
+                    current_trust = user_data.get("trust_level", 0)
+                    new_trust = current_trust + 1 
 
+                    async with AsyncClient() as client:
+                        await client.patch(
+                            f"{USER_SERVICE_URL}/users/{user_id_to_check}", 
+                            json={"trust_level": new_trust}
+                        )
+                    
+                    trust_update_message = f" Рівень довіри User ID #{user_id_to_check} автоматично підвищено до {new_trust}."
+                    
+            except Exception as e:
+                trust_update_message = f" Помилка авто-оновлення рівня довіри для User ID #{user_id_to_check}: {e}"
+
+    session.set("admin_success", f"Статус бронювання #{booking_id} оновлено на '{new_status}'.{trust_update_message}")
+    return RedirectResponse(url="/admin/panel", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.post("/admin/users/trust/{user_id}")
 async def admin_update_user_trust(

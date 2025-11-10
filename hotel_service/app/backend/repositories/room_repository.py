@@ -80,3 +80,9 @@ def delete_room_by_id(db: Session, room_id: int) -> int:
     return deleted_count
 
 
+def get_rooms_by_ids(db: Session, room_ids: List[int]) -> List[Room]:
+    if not room_ids:
+        return []
+        
+    # Використовуємо 'in_' для фільтрації за списком значень
+    return db.query(Room).filter(Room.id.in_(room_ids)).all()
