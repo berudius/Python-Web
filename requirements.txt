@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+redis
+fastapi-redis-session
+jinja2
+python-multipart
+httpx
+pydantic
+python-dotenv
+email-validator
+requests
