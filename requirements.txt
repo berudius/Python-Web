@@ -8,6 +8,3 @@ jinja2
 python-multipart
 httpx
 pydantic
-python-dotenv
-email-validator
-requests
