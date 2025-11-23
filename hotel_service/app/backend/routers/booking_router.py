@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 from ..config.jinja_template_config import templates
 from common.config.redis_session_config import session_storage
 from common.db.database import get_db
-from common.config.services_paths import USER_SERVICE_URL, BOOKING_SERVICE_URL
+from common.config.services_paths import USER_SERVICE_URL, HOTEL_SERVICE_URL
 from ..repositories import booking_repository
 
 from typing import List, Optional
@@ -175,7 +175,7 @@ async def get_my_bookings_page(
     is_admin = session.get("is_admin", False)
     
     guest_booking_ids = session.get("guest_booking_ids", [])
-    sync_redirect_url = f"{BOOKING_SERVICE_URL}/auth/sync"
+    sync_redirect_url = f"{HOTEL_SERVICE_URL}/auth/sync"
     auth_urls = generate_auth_urls(USER_SERVICE_URL, sync_redirect_url, guest_booking_ids)
     
     bookings = []
@@ -298,7 +298,7 @@ async def get_booking_confirmation_page(
     user_phone = ""
     trust_level = 0
 
-    sync_redirect_url = f"{BOOKING_SERVICE_URL}/auth/sync"
+    sync_redirect_url = f"{HOTEL_SERVICE_URL}/auth/sync"
     auth_urls = generate_auth_urls(USER_SERVICE_URL, sync_redirect_url, guest_booking_ids)
 
     if is_authorized:
