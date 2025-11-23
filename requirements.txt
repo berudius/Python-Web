@@ -7,4 +7,5 @@ fastapi-redis-session
 jinja2
 python-multipart
 httpx
+passlib
 pydantic
